@@ -12,7 +12,10 @@
       "~/*": [
         "src/*"
       ] // Đường dẫn tương đối cho các import (alias)
-    }
+    },
+    "types": [
+      "node"
+    ]
   },
   "ts-node": {
     "require": [
