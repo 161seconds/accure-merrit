@@ -1,7 +1,7 @@
 import { error } from 'console'
 import jwt from 'jsonwebtoken'
 import { resolve } from 'path'
-import { TokenPayload } from '~/models/request/User.requests'
+import { TokenPayload } from '~/models/request/user.requests'
 
 export const signToken = ({
   payload,

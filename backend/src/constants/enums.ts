@@ -15,3 +15,14 @@ export enum TokenType {
   ForgotPasswordToken, //2
   EmailVerificationToken //3
 }
+
+export enum MeritType {
+  GOOD = 'GOOD',
+  BAD = 'BAD'
+}
+
+export enum MeritLevel {
+  EASY = 5,
+  MEDIUM = 10,
+  HARD = 15
+}

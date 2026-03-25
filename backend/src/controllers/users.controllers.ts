@@ -12,7 +12,7 @@ import {
   TokenPayload,
   updateMeReqBody,
   VerifyForgotPasswordTokenReqBdy
-} from '~/models/request/User.requests'
+} from '~/models/request/user.requests'
 import { NextFunction, ParamsDictionary } from 'express-serve-static-core'
 import userServices from '~/services/users.services'
 import { ErrorWithStatus } from '~/models/Errors'

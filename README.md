@@ -1,2 +1,2 @@
 # accure-merrit
-toi se tich duc
+tôi sẽ tích đức

@@ -1,6 +1,6 @@
 import { Collection, Db, MongoClient } from 'mongodb'
 import dotenv from 'dotenv'
-import User from '~/models/User.schema'
+import User from '~/models/user.schema'
 import RefreshToken from '~/models/RefreshToken.shema'
 dotenv.config() // kết nối file .env
 

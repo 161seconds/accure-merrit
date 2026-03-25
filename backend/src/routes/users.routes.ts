@@ -13,7 +13,7 @@ import {
   updateMeController,
   verifyForgotPasswordController
 } from '~/controllers/users.controllers'
-import { filterMiddleware } from '~/middlewares/commom.middlewares'
+import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
   accessTokenValidator,
   changePasswordValidator,
@@ -26,7 +26,7 @@ import {
   resetPasswordValidator,
   updateMeValidator
 } from '~/middlewares/users.middlewares'
-import { updateMeReqBody } from '~/models/request/User.requests'
+import { updateMeReqBody } from '~/models/request/user.requests'
 import userServices from '~/services/users.services'
 import { wrapAsync } from '~/utils/handler'
 

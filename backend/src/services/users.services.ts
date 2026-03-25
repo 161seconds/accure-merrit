@@ -1,6 +1,6 @@
-import User from '~/models/User.schema'
+import User from '~/models/user.schema'
 import databaseServices from './database.services'
-import { LoginReqBody, RegisterReqBody, updateMeReqBody } from '~/models/request/User.requests'
+import { LoginReqBody, RegisterReqBody, updateMeReqBody } from '~/models/request/user.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
