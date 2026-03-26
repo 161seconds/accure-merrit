@@ -1,435 +1,418 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GieoNhanLanh.vn - Login</title>
-    <link
-      rel="icon"
-      type="image/png"
-      href="../../assets/images/logoApp/logoHertz.png"
-      
-    />
-    <!-- css -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
-    <!-- <video autoplay muted loop playsinline class="bgVideo">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GieoNhanLanh - Login</title>
+  <link rel="icon" type="image/png" href="../../assets/images/logoApp/logoHertz.png" />
+  <!-- css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- <video autoplay muted loop playsinline class="bgVideo">
       <source src="../../assets/video/videoBackground.mp4" type="video/mp4" />
     </video> -->
 
-    <link rel="stylesheet" href="./login.css" />
+  <link rel="stylesheet" href="./login.css" />
 
 
 
 
-    <style>
-    
-
-:root {
-  --gold: #C9A84C;
-  --gold-light: #E8C97A;
-  --gold-dim: #7A5E28;
-  --red: #B83228;
-  --red-glow: rgba(184,50,40,0.4);
-  --jade: #2E6B48;
-  --jade-light: #4A9B6A;
-  --ink: #0D0A04;
-  --ink2: #1A1108;
-  --parchment: #F0E6C8;
-  --parchment2: #D8C89A;
-  --smoke: rgba(240,230,200,0.07);
-}
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8C97A;
+      --gold-dim: #7A5E28;
+      --red: #B83228;
+      --red-glow: rgba(184, 50, 40, 0.4);
+      --jade: #2E6B48;
+      --jade-light: #4A9B6A;
+      --ink: #0D0A04;
+      --ink2: #1A1108;
+      --parchment: #F0E6C8;
+      --parchment2: #D8C89A;
+      --smoke: rgba(240, 230, 200, 0.07);
+    }
 
 
 
     * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 62.5%;
-}
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 62.5%;
+    }
 
-body {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1A1108, #0D0A04);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  font-size: 1.6rem;
-}
-.bgVideo {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -2;
-}
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1A1108, #0D0A04);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 1.6rem;
+    }
 
-.containerLogin {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+    .bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
 
-.boxLogin {
-  width: 400px;
-  /* width: 30%; */
-  background: rgba(240,230,200,0.07);
-  border-radius: 16px;
-  padding: 40px 30px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
-}
+    .containerLogin {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-.titleLogin {
-  text-align: center;
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  color: #7A5E28;
-}
+    .boxLogin {
+      width: 400px;
+      /* width: 30%; */
+      background: rgba(240, 230, 200, 0.07);
+      border-radius: 16px;
+      padding: 40px 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
+    }
 
-.inputBoxLogin {
-  position: relative;
-  width: 100%;
-  margin-bottom: 24px;
-}
+    .titleLogin {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #7A5E28;
+    }
 
-.inputBoxLogin input {
-  width: 100%;
-  padding: 14px 10px;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #fff;
-  font-size: 16px;
-  border-bottom: 1px solid #333;
-}
+    .inputBoxLogin {
+      position: relative;
+      width: 100%;
+      margin-bottom: 24px;
+    }
 
-.inputBoxLogin span {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #777;
-  font-size: 14px;
-  pointer-events: none;
-  transition: 0.3s;
-}
+    .inputBoxLogin input {
+      width: 100%;
+      padding: 14px 10px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 16px;
+      border-bottom: 1px solid #333;
+    }
 
-.inputBoxLogin i {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 2px;
-  background: #7A5E28;
-  transition: 0.3s;
-}
+    .inputBoxLogin span {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+      font-size: 14px;
+      pointer-events: none;
+      transition: 0.3s;
+    }
 
-.inputBoxLogin input:focus ~ span,
-.inputBoxLogin input:valid ~ span {
-  top: -6px;
-  font-size: 12px;
-  color: #7A5E28;
-}
+    .inputBoxLogin i {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: #7A5E28;
+      transition: 0.3s;
+    }
 
-.inputBoxLogin input:focus ~ i,
-.inputBoxLogin input:valid ~ i {
-  width: 100%;
-}
+    .inputBoxLogin input:focus~span,
+    .inputBoxLogin input:valid~span {
+      top: -6px;
+      font-size: 12px;
+      color: #7A5E28;
+    }
 
-.linksLogin {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
+    .inputBoxLogin input:focus~i,
+    .inputBoxLogin input:valid~i {
+      width: 100%;
+    }
 
-.linksLogin a {
-  color: #aaa;
-  font-size: 13px;
-  text-decoration: none;
-}
+    .linksLogin {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
 
-.linksLogin a:hover {
-  color: #7A5E28;
-}
+    .linksLogin a {
+      color: #aaa;
+      font-size: 13px;
+      text-decoration: none;
+    }
 
-.btnLogin {
-  width: 100%;
-  padding: 11px;
-  background: #7A5E28;
-  border: none;
-  border-radius: 30px;
-  color: #000;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-  margin-top: 2rem;
-}
+    .linksLogin a:hover {
+      color: #7A5E28;
+    }
 
-.btnLogin:hover {
-  background: rgba(184, 136, 40, 0.4);
-}
+    .btnLogin {
+      width: 100%;
+      padding: 11px;
+      background: #7A5E28;
+      border: none;
+      border-radius: 30px;
+      color: #000;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 2rem;
+    }
 
-.dividerLogin {
-  margin: 26px 0;
-  text-align: center;
-  position: relative;
-}
+    .btnLogin:hover {
+      background: rgba(184, 136, 40, 0.4);
+    }
 
-.dividerLogin span {
-  font-size: 12px;
-  color: #999;
-  background: #111;
-  padding: 0 12px;
-  position: relative;
-  z-index: 1;
-}
+    .dividerLogin {
+      margin: 26px 0;
+      text-align: center;
+      position: relative;
+    }
 
-.dividerLogin::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: #333;
-}
+    .dividerLogin span {
+      font-size: 12px;
+      color: #999;
+      background: #111;
+      padding: 0 12px;
+      position: relative;
+      z-index: 1;
+    }
 
-.socialLogin {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-}
+    .dividerLogin::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: #333;
+    }
 
-.socialBtn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid #333;
-  background: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 19px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+    .socialLogin {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
 
-.socialBtn i {
-  font-size: 1.6rem;
-}
+    .socialBtn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid #333;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 19px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-.socialBtn:hover {
-  /* transform: scale(1.1); */
-  border-color: #2e2e2e;
-  /* background-color: #000; */
-}
+    .socialBtn i {
+      font-size: 1.6rem;
+    }
 
-.socialBtn.google {
-  color: #b8b8b8;
-}
-.socialBtn.google:hover {
-  color: #d90000;
-}
+    .socialBtn:hover {
+      /* transform: scale(1.1); */
+      border-color: #2e2e2e;
+      /* background-color: #000; */
+    }
 
-.socialBtn.facebook {
-  color: #b8b8b8;
-}
-.socialBtn.facebook:hover {
-  color: #1877f2;
-}
+    .socialBtn.google {
+      color: #b8b8b8;
+    }
 
-.passwordBox {
-  position: relative;
-}
+    .socialBtn.google:hover {
+      color: #d90000;
+    }
 
-.togglePassword {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #777;
-  cursor: pointer;
-  font-size: 2rem;
-}
+    .socialBtn.facebook {
+      color: #b8b8b8;
+    }
 
-.passwordBox input:focus ~ .togglePassword {
-  color: #7A5E28;
-}
+    .socialBtn.facebook:hover {
+      color: #1877f2;
+    }
 
-.togglePassword:hover {
-  color: #7A5E28;
-}
+    .passwordBox {
+      position: relative;
+    }
 
-.privacy {
-  font-size: 1.2rem;
-  font-family: Tahoma, Geneva, Verdana, sans-serif;
-  color: #aaa;
-  user-select: none;
-}
-.boxPrivacy {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  cursor: pointer;
-  font-size: 15px;
-  line-height: 1.4;
-}
+    .togglePassword {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #777;
+      cursor: pointer;
+      font-size: 2rem;
+    }
 
-.boxPrivacy input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 2.5rem;
-  height: 2.2rem;
-  border: 2px solid #7A5E28;
-  border-radius: 4px;
-  cursor: pointer;
-  position: relative;
-  margin-top: 3px;
-  transition: all 0.2s ease;
-  /* background-color: #fff; */
-}
+    .passwordBox input:focus~.togglePassword {
+      color: #7A5E28;
+    }
 
-.boxPrivacy input[type="checkbox"]:hover {
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
-}
+    .togglePassword:hover {
+      color: #7A5E28;
+    }
 
-.boxPrivacy input[type="checkbox"]:checked {
-  background-color: #7A5E28;
-  border-color: #7A5E28;
-}
+    .privacy {
+      font-size: 1.2rem;
+      font-family: Tahoma, Geneva, Verdana, sans-serif;
+      color: #aaa;
+      user-select: none;
+    }
 
-.boxPrivacy input[type="checkbox"]:checked::after {
-  content: "";
-  position: absolute;
-  left: 6px;
-  top: 2px;
-  width: 4px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
-}
+    .boxPrivacy {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      line-height: 1.4;
+    }
 
-/* .privacy:hover {
+    .boxPrivacy input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 2.5rem;
+      height: 2.2rem;
+      border: 2px solid #7A5E28;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      margin-top: 3px;
+      transition: all 0.2s ease;
+      /* background-color: #fff; */
+    }
+
+    .boxPrivacy input[type="checkbox"]:hover {
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+
+    .boxPrivacy input[type="checkbox"]:checked {
+      background-color: #7A5E28;
+      border-color: #7A5E28;
+    }
+
+    .boxPrivacy input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 4px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+
+    /* .privacy:hover {
   color: #7A5E28;
 } */
 
-@media (max-width: 480px) {
-  .boxLogin {
-    width: 90%;
-    padding: 30px 20px;
-  }
-}
-input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
-  display: none;
-}
+    @media (max-width: 480px) {
+      .boxLogin {
+        width: 90%;
+        padding: 30px 20px;
+      }
+    }
 
-input[type="password"]::-webkit-credentials-auto-fill-button,
-input[type="password"]::-webkit-contacts-auto-fill-button,
-input[type="password"]::-webkit-textfield-decoration-container {
-  display: none !important;
-}</style>
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear {
+      display: none;
+    }
+
+    input[type="password"]::-webkit-credentials-auto-fill-button,
+    input[type="password"]::-webkit-contacts-auto-fill-button,
+    input[type="password"]::-webkit-textfield-decoration-container {
+      display: none !important;
+    }
+  </style>
 
 
 
-  </head>
-  <body>
-    <!-- code here -->
-    <div class="containerLogin">
-      <div class="boxLogin">
-        <div class="titleLogin">Login</div>
-        <form id="formLogin" autocomplete="off">
-          <div class="inputBoxLogin">
-            <input type="text" id="username" required />
-            <span>Username</span>
-            <i></i>
-          </div>
+</head>
 
-          <div class="inputBoxLogin passwordBox">
-            <input type="password" id="password" required />
-            <span>Password</span>
-            <i></i>
+<body>
+  <!-- code here -->
+  <div class="containerLogin">
+    <div class="boxLogin">
+      <div class="titleLogin">Login</div>
+      <form id="formLogin" autocomplete="off">
+        <div class="inputBoxLogin">
+          <input type="text" id="username" required />
+          <span>Username</span>
+          <i></i>
+        </div>
 
-            <button type="button" class="togglePassword">
-              <i class="fa-solid fa-eye"></i>
-            </button>
-          </div>
+        <div class="inputBoxLogin passwordBox">
+          <input type="password" id="password" required />
+          <span>Password</span>
+          <i></i>
 
-          <div class="linksLogin">
-            <a href="../pageForgotPassword/forgotPassword.html"
-              >Forgot Password?</a
-            >
-            <a href="../pageRegister/register.html">Sign Up</a>
-          </div>
+          <button type="button" class="togglePassword">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
 
-          <label class="boxPrivacy">
-            <input id="agree" type="checkbox" checked />
-            <label for="agree" class="privacy"
-              >I have read, understood, and agree to the
-              <a
-                href="https://www.nhaccuatui.com/privacy-policy"
-                target="_blank"
-                rel="noopener noreferrer"
-                style="
+        <div class="linksLogin">
+          <a href="../pageForgotPassword/forgotPassword.html">Forgot Password?</a>
+          <a href="./register.html">Sign Up</a>
+        </div>
+
+        <label class="boxPrivacy">
+          <input id="agree" type="checkbox" checked />
+          <label for="agree" class="privacy">I have read, understood, and agree to the
+            <a href="https://www.nhaccuatui.com/privacy-policy" target="_blank" rel="noopener noreferrer" style="
                   font-size: 1.2rem;
                   font-family: Tahoma, Geneva, Verdana, sans-serif;
                   color: #aaa;
                   user-select: none;
                   text-decoration: none;
                   color: #7A5E28;
-                "
-                >Privacy Policy</a
-              >
-              and
-              <a
-                href="https://www.nhaccuatui.com/terms-of-use"
-                target="_blank"
-                rel="noopener noreferrer"
-                style="
+                ">Privacy Policy</a>
+            and
+            <a href="https://www.nhaccuatui.com/terms-of-use" target="_blank" rel="noopener noreferrer" style="
                   font-size: 1.2rem;
                   font-family: Tahoma, Geneva, Verdana, sans-serif;
                   color: #aaa;
                   user-select: none;
                   text-decoration: none;
                   color: #7A5E28;
-                "
-                >Terms of Use</a
-              >.</label
-            >
-          </label>
+                ">Terms of Use</a>.</label>
+        </label>
 
-          <button type="submit" class="btnLogin">Login</button>
-          <div class="dividerLogin">
-            <span>or continue with</span>
-          </div>
+        <button type="submit" class="btnLogin">Login</button>
+        <div class="dividerLogin">
+          <span>or continue with</span>
+        </div>
 
-          <div class="socialLogin">
-            <button class="socialBtn google">
-              <i class="fa-brands fa-google"></i>
-            </button>
+        <div class="socialLogin">
+          <button class="socialBtn google">
+            <i class="fa-brands fa-google"></i>
+          </button>
 
-            <button class="socialBtn facebook">
-              <i class="fa-brands fa-facebook-f"></i>
-            </button>
-          </div>
-        </form>
-      </div>
+          <button class="socialBtn facebook">
+            <i class="fa-brands fa-facebook-f"></i>
+          </button>
+        </div>
+      </form>
     </div>
-    <!-- code here -->
-    <!-- script -->
-    <script src="/client/assets/js/auth.js"></script>
-  </body>
+  </div>
+  <!-- code here -->
+  <!-- script -->
+  <script src="/client/assets/js/auth.js"></script>
+</body>
+
 </html>
