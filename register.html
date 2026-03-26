@@ -284,7 +284,6 @@
             });
         });
 
-        // Xử lý submit form (Gửi qua auth.js của ông)
         document.getElementById("formRegister").addEventListener("submit", (e) => {
             const password = document.getElementById("password").value;
             const confirm = document.getElementById("confirmPassword").value;
@@ -294,6 +293,24 @@
                 alert("Passwords do not match!");
             }
         });
+
+        function handleRegister(username, password, name) {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+
+            if (users.find(u => u.username === username)) {
+                alert('This username is already taken!');
+                return;
+            }
+
+            const newUser = { username, password, name: name || username };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('Registration successful! You can now log in.');
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            window.location.href = 'login.html';
+        }
+
     </script>
 </body>
 

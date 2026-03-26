@@ -307,12 +307,112 @@
       box-shadow: 0 0 8px rgba(201, 168, 76, .7);
     }
 
+    /* --- BỔ SUNG KHU VỰC USER TRÊN HEADER --- */
+    .user-zone {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      /* Tăng khoảng cách để đẩy danh hiệu qua một chút */
+    }
+
+    /* Chữ Đăng nhập / Đăng ký */
+    .auth-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: rgba(240, 230, 200, 0.6);
+      /* var(--parchment) mờ */
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .auth-links span {
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .auth-links span:hover {
+      color: var(--gold-light);
+    }
+
+    .auth-divider {
+      color: rgba(201, 168, 76, 0.3);
+      cursor: default;
+    }
+
+    /* Wrapper chứa Avatar và Menu */
+    .avatar-wrapper {
+      position: relative;
+    }
+
+    /* Menu Dropdown */
+    .user-menu {
+      position: absolute;
+      top: 140%;
+      right: 0;
+      background: rgba(13, 10, 4, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      border-radius: 8px;
+      min-width: 150px;
+      padding: 6px 0;
+      display: flex;
+      flex-direction: column;
+
+      /* Hiệu ứng mượt mà */
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 200;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+
+    .user-menu.open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .um-item {
+      padding: 10px 16px;
+      font-size: 11px;
+      color: var(--parchment);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .um-item:hover {
+      background: rgba(201, 168, 76, 0.12);
+      color: var(--gold-light);
+    }
+
+    .um-icon {
+      font-size: 14px;
+    }
+
+    .um-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.15), transparent);
+      margin: 4px 0;
+    }
+
     .score-widget {
       position: absolute;
       z-index: 6;
-      bottom: 30%;
-      left: 47.1%;
-      transform: translateX(-50%);
+      top: 17em;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      height: fit-content;
+      width: 90%;
+      max-width: 400px;
       text-align: center;
       opacity: 0;
       animation: fuA .9s 1.2s forwards;
@@ -2391,11 +2491,40 @@
         <div class="logo-ring">☸</div>
         <div><span class="logo-name">Tích Đức</span><span class="logo-tagline">Nhật Ký Tâm Linh</span></div>
       </div>
+
       <div class="user-zone">
         <div class="badge" id="title-badge" onclick="goPage('danhhieu')">✦ Thiện Nhân Sơ Cấp</div>
-        <div class="avatar">🧘</div>
+
+        <div class="auth-links" id="guest-links">
+          <span onclick="window.location.href='login.html'">Đăng nhập</span>
+          <span class="auth-divider">/</span>
+          <span onclick="window.location.href='register.html'">Đăng ký</span>
+        </div>
+
+        <div id="user-name-display"
+          style="display: none; font-size: 11px; color: var(--gold-light); font-weight: 700; letter-spacing: 0.05em; padding-right: 4px;">
+        </div>
+
+        <div class="avatar-wrapper">
+          <div class="avatar" onclick="toggleUserMenu(event)">🧘</div>
+
+          <div class="user-menu" id="user-menu-dropdown">
+            <div class="um-item" onclick="goPage('caidat')">
+              <span class="um-icon">⚙️</span> Cài đặt
+            </div>
+            <div class="um-item" onclick="goPage('quyengop')">
+              <span class="um-icon">🏮</span> Quyên góp
+            </div>
+
+            <div class="um-divider" id="logout-divider"></div>
+            <div class="um-item" id="logout-btn" style="color: #E8A090;" onclick="handleLogout()">
+              <span class="um-icon">🚪</span> Đăng xuất
+            </div>
+          </div>
+        </div>
       </div>
     </header>
+
     <div class="lanterns">
       <div class="lnt">
         <div class="lnt-str"></div>
@@ -2420,7 +2549,7 @@
     </div>
     <div class="score-widget">
       <div class="score-lbl">Công Đức Tích Lũy</div>
-      <div class="score-num" id="home-score">2.847</div>
+      <div class="score-num" id="home-score">3,667</div>
       <div class="score-unit">điểm thiện lành</div>
     </div>
     <div class="tasks-card">
@@ -2788,7 +2917,7 @@
           </div>
           <div class="sb-net">
             <div class="sb-lbl">Điểm Thuần</div>
-            <div class="sb-val duc" id="net-score">+2.847</div>
+            <div class="sb-val duc" id="net-score">+3.667</div>
           </div>
         </div>
         <div class="so-top">
@@ -2961,9 +3090,31 @@
         <div class="logo-ring">☸</div>
         <div><span class="logo-name">Tích Đức</span><span class="logo-tagline">Nhật Ký Tâm Linh</span></div>
       </div>
+
       <div class="user-zone">
-        <div class="badge">✦ Thiện Nhân Sơ Cấp</div>
-        <div class="avatar">🧘</div>
+        <div class="badge" id="title-badge" onclick="goPage('danhhieu')">✦ Thiện Nhân Sơ Cấp</div>
+
+        <div class="auth-links" id="guest-links">
+          <span onclick="window.location.href='login.html'">Đăng nhập</span>
+          <span class="auth-divider">/</span>
+          <span onclick="window.location.href='register.html'">Đăng ký</span>
+        </div>
+
+        <div id="user-name-display"
+          style="display: none; font-size: 11px; color: var(--gold-light); font-weight: 700; margin-right: 5px;"></div>
+
+        <div class="avatar-wrapper">
+          <div class="avatar" onclick="toggleUserMenu(event)">🧘</div>
+          <div class="user-menu">
+            <div class="um-item" onclick="goPage('caidat')"><span class="um-icon">⚙️</span> Cài đặt</div>
+            <div class="um-item" onclick="goPage('quyengop')"><span class="um-icon">🏮</span> Quyên góp</div>
+
+            <div class="um-divider" id="logout-divider"></div>
+            <div class="um-item" id="logout-btn" style="color: #E8A090;" onclick="handleLogout()">
+              <span class="um-icon">🚪</span> Đăng xuất
+            </div>
+          </div>
+        </div>
       </div>
     </header>
     <div class="sub-content">
@@ -2983,7 +3134,7 @@
           <div class="qg-hero-title">Cúng Dường Tam Bảo</div>
           <div class="qg-hero-desc">"Bố thí là hạt giống công đức, gieo nhân lành gặt quả lành"<br>Mỗi đồng quyên góp là
             một ngọn nến thắp sáng trí tuệ.</div>
-          <div class="qg-total-raised" id="qg-total">12.500.000 đ</div>
+          <div class="qg-total-raised" id="qg-total">36.363.363 VND</div>
           <div class="qg-total-label">Tổng tiền đã quyên góp</div>
         </div>
 
@@ -3074,8 +3225,109 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
+    function initializeApp() {
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      if (!users.find(u => u.username === '161seconds')) {
+        users.push({ username: '161seconds', password: '123', name: '161seconds' });
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+      const guestLinks = document.getElementById('guest-links');
+      const nameDisplay = document.getElementById('user-name-display');
+      const logoutBtn = document.getElementById('logout-btn');
+      const logoutDiv = document.getElementById('logout-divider');
+
+      if (currentUser) {
+        // TRẠNG THÁI: ĐÃ ĐĂNG NHẬP
+        if (guestLinks) guestLinks.style.display = 'none';
+        if (nameDisplay) {
+          nameDisplay.style.display = 'block';
+          nameDisplay.textContent = currentUser.name;
+        }
+        if (logoutBtn) logoutBtn.style.display = 'flex';
+        if (logoutDiv) logoutDiv.style.display = 'block';
+      } else {
+        // TRẠNG THÁI: CHƯA ĐĂNG NHẬP (MẶC ĐỊNH)
+        if (guestLinks) guestLinks.style.display = 'flex';
+        if (nameDisplay) nameDisplay.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (logoutDiv) logoutDiv.style.display = 'none';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', initializeApp);
+
+    // ══════════════ USER MENU ══════════════
+    function toggleUserMenu(e) {
+      e.stopPropagation(); // Chặn click lan ra ngoài body
+
+      // Tìm menu nằm ngay dưới avatar vừa được click
+      const menu = e.currentTarget.nextElementSibling;
+      const isOpen = menu.classList.contains('open');
+
+      // Đóng toàn bộ các menu khác (trường hợp có nhiều header)
+      document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
+
+      // Mở menu hiện tại nếu nó đang đóng
+      if (!isOpen) {
+        menu.classList.add('open');
+      }
+    }
+
+    // Tự động đóng menu khi bấm ra vùng trống trên màn hình
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
+    });
+
+    function checkAuthState() {
+      initMockDB();
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+      const guestLinks = document.getElementById('guest-links');
+      const nameDisplay = document.getElementById('user-name-display');
+      const logoutBtn = document.getElementById('logout-btn');
+      const logoutDiv = document.getElementById('logout-divider');
+
+      if (currentUser) {
+        // ĐÃ ĐĂNG NHẬP
+        if (guestLinks) guestLinks.style.display = 'none';
+        if (nameDisplay) {
+          nameDisplay.style.display = 'block';
+          nameDisplay.textContent = currentUser.name;
+        }
+        if (logoutBtn) logoutBtn.style.display = 'flex';
+        if (logoutDiv) logoutDiv.style.display = 'block';
+      } else {
+        // CHƯA ĐĂNG NHẬP
+        if (guestLinks) guestLinks.style.display = 'flex';
+        if (nameDisplay) nameDisplay.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (logoutDiv) logoutDiv.style.display = 'none';
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('currentUser');
+      if (typeof showToast === "function") showToast('Đã đăng xuất thành công');
+      checkAuthState(); // Cập nhật lại giao diện ngay lập tức
+    }
+
+    // Gọi hàm này ngay khi trang tải xong
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuthState();
+    });
+
+    function handleLogout() {
+      localStorage.removeItem('currentUser');
+      if (typeof showToast === "function") showToast('Đã đăng xuất 🙏');
+
+      // Chạy lại hàm kiểm tra để ẩn tên, hiện lại nút Đăng nhập/Đăng ký
+      initializeApp();
+    }
+
     // ══════════════ STATE ══════════════
-    let ducTotal = 3120, toiTotal = 273, netScore = 2847, streak = 7, moCount = 0;
+    let ducTotal = 3667, toiTotal = 0, netScore = 3667, streak = 7, moCount = 0;
 
     // ══════════════ QR GENERATOR ══════════════
     // Minimal QR-like SVG generator (visual only, not scannable — replace with real QR images)
@@ -3272,30 +3524,66 @@
     function getCurrentTitle() { let cur = TITLES_PTS[0]; for (const t of TITLES_PTS) { if (netScore >= t.req) cur = t; } return cur; }
 
     function renderTitles() {
-      const cur = getCurrentTitle();
-      ['dh-cur-icon', 'dh-cur-name', 'dh-cur-desc'].forEach((id, i) => { const el = document.getElementById(id); if (el) el.textContent = [cur.icon, cur.name, cur.desc][i]; });
-      ['title-badge', 'nv-badge', 'dh-badge'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '✦ ' + cur.name; });
+      const savedId = localStorage.getItem('equippedTitleId');
+      const cur = TITLES_PTS.find(t => t.id === savedId) || TITLES_PTS[0];
+      const elementsToUpdate = {
+        'dh-cur-icon': cur.icon,
+        'dh-cur-name': cur.name,
+        'dh-cur-desc': cur.desc,
+        'title-badge': '✦ ' + cur.name,
+        'nv-badge': '✦ ' + cur.name,
+        'dh-badge': '✦ ' + cur.name
+      };
+      Object.entries(elementsToUpdate).forEach(([id, value]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      });
       const pg = document.getElementById('dh-pts-grid');
-      if (!pg) return;
-      pg.innerHTML = '';
-      TITLES_PTS.forEach(t => {
-        const unlocked = netScore >= t.req, isCur = t.id === cur.id;
-        const div = document.createElement('div');
-        div.className = 'dh-card ' + (unlocked ? 'unlocked' : 'locked');
-        if (isCur) div.style.boxShadow = '0 0 16px rgba(201,168,76,.3)';
-        div.innerHTML = `${!unlocked ? '<div class="dh-lock-icon">🔒</div>' : ''}${isCur ? '<div class="dh-lock-icon" style="opacity:1;font-size:8px;color:var(--gold)">ĐEO</div>' : ''}<div class="dh-card-icon">${t.icon}</div><div class="dh-card-name">${t.name}</div><div class="dh-card-pts">${t.req === 0 ? 'Mặc định' : t.req.toLocaleString() + ' đ'}</div><div class="dh-card-req">${unlocked ? '✓ Đã mở' : 'Cần thêm ' + (t.req - netScore).toLocaleString() + ' đ'}</div>`;
-        if (unlocked) div.onclick = () => { showToast('✦ Đã trang bị: ' + t.name); };
-        pg.appendChild(div);
-      });
+      if (pg) {
+        pg.innerHTML = '';
+        TITLES_PTS.forEach(t => {
+          const unlocked = netScore >= t.req;
+          const isCur = t.id === cur.id;
+          const div = document.createElement('div');
+          div.className = `dh-card ${unlocked ? 'unlocked' : 'locked'}`;
+          if (isCur) div.style.boxShadow = '0 0 16px rgba(201,168,76,.3)';
+
+          div.innerHTML = `
+        ${!unlocked ? '<div class="dh-lock-icon">🔒</div>' : ''}
+        ${isCur ? '<div class="dh-lock-icon" style="opacity:1;font-size:8px;color:gold">ĐEO DANH HIỆU</div>' : ''}
+        <div class="dh-card-icon">${t.icon}</div>
+        <div class="dh-card-name">${t.name}</div>
+        <div class="dh-card-pts">${t.req === 0 ? 'Mặc định' : t.req.toLocaleString() + ' đ'}</div>
+        <div class="dh-card-req">${unlocked ? '✓ Đã mở' : 'Cần thêm ' + (t.req - netScore).toLocaleString() + ' đ'}</div>
+      `;
+          if (unlocked) {
+            div.onclick = () => {
+              localStorage.setItem('equippedTitleId', t.id); // Lưu trạng thái đeo vào máy
+              if (typeof showToast === "function") showToast('✦ Đã trang bị: ' + t.name);
+              renderTitles(); // Gọi lại chính nó để cập nhật giao diện toàn trang
+            };
+            div.style.cursor = 'pointer';
+          }
+          pg.appendChild(div);
+        });
+      }
       const lg = document.getElementById('dh-limited-grid');
-      if (!lg) return;
-      lg.innerHTML = '';
-      TITLES_LIMITED.forEach(t => {
-        const div = document.createElement('div');
-        div.className = 'dh-card limited ' + (t.unlocked ? 'unlocked' : 'locked');
-        div.innerHTML = `<div class="dh-badge-limited">GIỚI HẠN</div>${!t.unlocked ? '<div class="dh-lock-icon">🔒</div>' : ''}<div class="dh-card-icon">${t.icon}</div><div class="dh-card-name">${t.name}</div><div class="dh-card-pts" style="color:#E8A090">${t.req}</div><div class="dh-card-req">${t.unlocked ? '✓ Đã mở' : 'Chưa đạt'}</div>`;
-        lg.appendChild(div);
-      });
+      if (lg) {
+        lg.innerHTML = '';
+        TITLES_LIMITED.forEach(t => {
+          const div = document.createElement('div');
+          div.className = 'dh-card limited ' + (t.unlocked ? 'unlocked' : 'locked');
+          div.innerHTML = `
+        <div class="dh-badge-limited">GIỚI HẠN</div>
+        ${!t.unlocked ? '<div class="dh-lock-icon">🔒</div>' : ''}
+        <div class="dh-card-icon">${t.icon}</div>
+        <div class="dh-card-name">${t.name}</div>
+        <div class="dh-card-pts" style="color:#E8A090">${t.req}</div>
+        <div class="dh-card-req">${t.unlocked ? '✓ Đã mở' : 'Chưa đạt'}</div>
+      `;
+          lg.appendChild(div);
+        });
+      }
     }
 
     function checkTitleUnlock() { const cur = getCurrentTitle(); netScore = ducTotal - toiTotal; const next = getCurrentTitle(); if (next.id !== cur.id) setTimeout(() => showModal(next.icon, 'Danh Hiệu Mới!', next.name, '✦ Đã mở khóa!'), 1500); }
@@ -3387,10 +3675,23 @@
 
     // ══════════════ SCORE ══════════════
     function updateScoreDisplays() {
+      // Tính toán điểm số
       netScore = ducTotal - toiTotal;
-      const el = document.getElementById('home-score'); if (el) el.textContent = netScore.toLocaleString();
-      const de = document.getElementById('duc-total'); if (de) de.textContent = '+' + ducTotal.toLocaleString();
-      const ne = document.getElementById('net-score'); if (ne) ne.textContent = '+' + netScore.toLocaleString();
+
+      // Helper function để cập nhật text an toàn
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+
+      // Cập nhật các element
+      setText('home-score', netScore.toLocaleString());
+
+      // Thêm dấu '+' nếu là số dương, giữ nguyên nếu là số âm hoặc 0
+      const prefix = netScore > 0 ? '+' : '';
+
+      setText('duc-total', `+${ducTotal.toLocaleString()}`);
+      setText('net-score', `${prefix}${netScore.toLocaleString()}`);
     }
 
     // ══════════════ SỔ ══════════════

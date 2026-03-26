@@ -12,10 +12,7 @@
       <source src="../../assets/video/videoBackground.mp4" type="video/mp4" />
     </video> -->
 
-  <link rel="stylesheet" href="./login.css" />
-
-
-
+  <!-- <link rel="stylesheet" href="./login.css" /> -->
 
   <style>
     :root {
@@ -351,13 +348,13 @@
       <div class="titleLogin">Login</div>
       <form id="formLogin" autocomplete="off">
         <div class="inputBoxLogin">
-          <input type="text" id="username" required />
+          <input type="text" id="username" placeholder="Login (161seconds)">
           <span>Username</span>
           <i></i>
         </div>
 
         <div class="inputBoxLogin passwordBox">
-          <input type="password" id="password" required />
+          <input type="password" id="password" placeholder="Password (123)">
           <span>Password</span>
           <i></i>
 
@@ -394,8 +391,8 @@
         </label>
 
         <button type="submit" class="btnLogin">Login</button>
-        <div class="dividerLogin">
-          <span>or continue with</span>
+        <!--        <div class="dividerLogin">
+        <span>or continue with</span>
         </div>
 
         <div class="socialLogin">
@@ -407,12 +404,64 @@
             <i class="fa-brands fa-facebook-f"></i>
           </button>
         </div>
+        -->
       </form>
     </div>
   </div>
   <!-- code here -->
   <!-- script -->
-  <script src="/client/assets/js/auth.js"></script>
+  <!-- <script src="/client/assets/js/auth.js"></script> -->
+  <script>
+    function handleLogin(username, password) {
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(u => u.username === username && u.password === password);
+
+      if (user) {
+        // Lưu phiên đăng nhập
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        alert('Successfully logged in!');
+        window.location.href = 'index.html'; // Đẩy về trang chính
+      } else {
+        alert('Wrong username or password!');
+      }
+    }
+
+    function loginWithGoogle() {
+      console.log("Opening Google authentication popup...");
+      alert("Redirecting to Google for authentication...");
+
+      setTimeout(() => {
+        // Tạo một tài khoản Google giả định trả về từ API
+        const googleUser = {
+          username: 'google_user_' + Math.floor(Math.random() * 1000),
+          name: 'Google User',
+          provider: 'google'
+        };
+
+        // Lưu vào phiên đăng nhập và đẩy về trang chủ
+        localStorage.setItem('currentUser', JSON.stringify(googleUser));
+        window.location.href = 'index.html';
+      }, 1500);
+    }
+
+    function loginWithFacebook() {
+      console.log("Opening Facebook authentication popup...");
+      alert("Redirecting to Facebook for authentication...");
+
+      setTimeout(() => {
+        // Tạo một tài khoản Facebook giả định trả về từ API
+        const fbUser = {
+          username: 'fb_user_' + Math.floor(Math.random() * 1000),
+          name: 'Facebook User',
+          provider: 'facebook'
+        };
+
+        // Lưu vào phiên đăng nhập và đẩy về trang chủ
+        localStorage.setItem('currentUser', JSON.stringify(fbUser));
+        window.location.href = 'index.html';
+      }, 1500);
+    }
+  </script>
 </body>
 
 </html>
