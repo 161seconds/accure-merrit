@@ -2578,6 +2578,7 @@
     <nav class="app-footer">
       <div class="nav-item active" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
+      <div class="nav-item" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
       <div class="nav-item" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
       <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
@@ -2646,6 +2647,7 @@
     <nav class="app-footer">
       <div class="nav-item" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item active" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
+      <div class="nav-item" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
       <div class="nav-item" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
       <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
@@ -2828,6 +2830,7 @@
     <nav class="app-footer">
       <div class="nav-item" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
+      <div class="nav-item" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
       <div class="nav-item active" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
       <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
@@ -2880,6 +2883,7 @@
     <nav class="app-footer">
       <div class="nav-item" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
+      <div class="nav-item active" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
       <div class="nav-item active" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
       <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
@@ -2959,6 +2963,7 @@
     <nav class="app-footer">
       <div class="nav-item" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
+      <div class="nav-item" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
       <div class="nav-item active" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
       <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
@@ -3030,6 +3035,7 @@
     <nav class="app-footer">
       <div class="nav-item" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
+      <div class="nav-item" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
       <div class="nav-item active" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
       <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
@@ -3075,6 +3081,7 @@
     <nav class="app-footer">
       <div class="nav-item" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
+      <div class="nav-item" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
       <div class="nav-item active" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
       <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
@@ -3174,6 +3181,7 @@
     <nav class="app-footer">
       <div class="nav-item" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
+      <div class="nav-item" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
       <div class="nav-item active" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
       <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
@@ -3326,8 +3334,19 @@
       initializeApp();
     }
 
-    // ══════════════ STATE ══════════════
-    let ducTotal = 0, toiTotal = 0, netScore = 0, streak = 1, moCount = 0;
+    // ══════════════ STATE (LƯU LOCALSTORAGE) ══════════════
+    // Lấy dữ liệu từ localStorage, nếu chưa có thì mặc định là 0
+    let ducTotal = parseInt(localStorage.getItem('ducTotal')) || 0;
+    let toiTotal = parseInt(localStorage.getItem('toiTotal')) || 0;
+    let moCount = parseInt(localStorage.getItem('moCount')) || 0;
+    let netScore = ducTotal - toiTotal;
+    let streak = 1;
+
+    // Cập nhật số lần gõ mõ ngay khi load trang
+    document.addEventListener('DOMContentLoaded', () => {
+      const moCountEl = document.getElementById('mo-count');
+      if (moCountEl) moCountEl.textContent = moCount;
+    });
 
     // ══════════════ QR GENERATOR ══════════════
     // Minimal QR-like SVG generator (visual only, not scannable — replace with real QR images)
@@ -3487,14 +3506,24 @@
     function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
     function onDrop(e, col) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); if (dragId) dropMission(dragId, col); }
 
+    // ══════════════ NHIỆM VỤ (KANBAN) ══════════════
     function dropMission(id, col) {
-      const m = MISSIONS.find(x => x.id === id); if (!m) return;
-      const prev = m.col; m.col = col;
+      const m = MISSIONS.find(x => x.id === id);
+      if (!m) return;
+
+      const prev = m.col;
+      m.col = col;
+
       if (col === 'done' && prev !== 'done') {
         const mult = m.streakBonus && streak >= 3 ? 1.5 : 1;
         const pts = Math.round(m.pts * mult);
-        ducTotal += pts; netScore = ducTotal - toiTotal;
+
+        // TĂNG ĐIỂM KHI HOÀN THÀNH
+        ducTotal += pts;
+
+        // LƯU VÀ ĐỒNG BỘ REAL-TIME
         updateScoreDisplays();
+
         setTimeout(() => showModal(m.icon, 'Nhiệm Vụ Hoàn Thành!', m.name, '+' + pts), 200);
         checkTitleUnlock();
       }
@@ -3593,6 +3622,7 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-' + name).classList.add('active');
       if (name === 'nhiemvu') renderKanban();
+      //if (name === 'gomo') ren
       if (name === 'danhhieu') renderTitles();
       if (name === 'quyengop') { renderDonors(); initQRs(); }
     }
@@ -3667,7 +3697,7 @@
 
     // ══════════════ TREE ══════════════
     const MAX_MERIT = 15000;
-    let meritPoints = 3667;
+    let meritPoints = 0;
 
     const treeGroup = new THREE.Group();
     treeGroup.position.set(0, -0.5, 0);
@@ -3833,62 +3863,134 @@
     function spawnPetal() { const el = document.createElement('div'); el.className = 'petal'; el.textContent = ['🌸', '✿', '❀', '🌺'][Math.floor(Math.random() * 4)]; el.style.left = Math.random() * 100 + 'vw'; el.style.bottom = '-20px'; el.style.fontSize = (10 + Math.random() * 12) + 'px'; const dur = 9 + Math.random() * 9; el.style.animation = `ptlF ${dur}s linear forwards`; petalContainer.appendChild(el); setTimeout(() => el.remove(), dur * 1000); }
     setInterval(spawnPetal, 3000);
 
-    // ══════════════ GÕ MÕ ══════════════
+    // ══════════════ GÕ MÕ (REAL-TIME ĐIỂM) ══════════════
     function hitMo() {
-      moCount++; document.getElementById('mo-count').textContent = moCount;
-      const wrap = document.getElementById('mo-bowl-wrap'), ripple = document.getElementById('mo-ripple');
-      wrap.classList.add('hit'); ripple.classList.remove('active'); void ripple.offsetWidth; ripple.classList.add('active');
+      moCount++;
+      document.getElementById('mo-count').textContent = moCount;
+      ducTotal += 1; // Cộng 1 điểm mỗi lần gõ
+
+      const wrap = document.getElementById('mo-bowl-wrap');
+      const ripple = document.getElementById('mo-ripple');
+      wrap.classList.add('hit');
+      ripple.classList.remove('active');
+      void ripple.offsetWidth;
+      ripple.classList.add('active');
       setTimeout(() => wrap.classList.remove('hit'), 180);
-      const waves = document.querySelectorAll('#mo-waves .sw'); const h = [6, 16, 26, 16, 6];
-      waves.forEach((w, i) => { w.style.height = h[i] + 'px'; w.style.opacity = '.8'; setTimeout(() => { w.style.height = '4px'; w.style.opacity = '.1'; }, 400); });
-      if (moCount === 10) showModal('🔔', 'Gõ 10 Tiếng Mõ!', 'Tâm thanh, trí sáng', '+100');
-      if (moCount === 50) showModal('🔔', 'Gõ 50 Tiếng Mõ!', 'Thiền định sâu sắc', '+500');
-      if (moCount === 100) showModal('🔔', 'Gõ 100 Tiếng Mõ!', 'Thiền định sâu sắc', '+1000');
+
+      const waves = document.querySelectorAll('#mo-waves .sw');
+      const h = [6, 16, 26, 16, 6];
+      waves.forEach((w, i) => {
+        w.style.height = h[i] + 'px';
+        w.style.opacity = '.8';
+        setTimeout(() => { w.style.height = '4px'; w.style.opacity = '.1'; }, 400);
+      });
+
+      // Mốc thưởng
+      if (moCount === 10) { ducTotal += 100; showModal('Chuông', 'Gõ 10 Tiếng Mõ!', 'Tâm thanh, trí sáng', '+100'); }
+      if (moCount === 50) { ducTotal += 500; showModal('Chuông', 'Gõ 50 Tiếng Mõ!', 'Thiền định sâu sắc', '+500'); }
+      if (moCount === 100) { ducTotal += 1000; showModal('Chuông', 'Gõ 100 Tiếng Mõ!', 'Thiền định sâu sắc', '+1000'); }
+
+      // Gọi hàm để lưu và update UI ngay lập tức
+      updateScoreDisplays();
     }
+
+    // ══════════════ REAL-TIME ĐỒNG BỘ ĐA TAB ══════════════
+    // Nếu ông mở dự án trên 2 tab browser, code này giúp 2 tab đồng bộ điểm với nhau
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'ducTotal' || e.key === 'toiTotal' || e.key === 'moCount') {
+        // Lấy dữ liệu mới nhất từ tab kia
+        ducTotal = parseInt(localStorage.getItem('ducTotal')) || 0;
+        toiTotal = parseInt(localStorage.getItem('toiTotal')) || 0;
+        moCount = parseInt(localStorage.getItem('moCount')) || 0;
+
+        // Cập nhật text số lần gõ
+        const moCountEl = document.getElementById('mo-count');
+        if (moCountEl) moCountEl.textContent = moCount;
+
+        // Cập nhật lại toàn bộ điểm và lá cây
+        updateScoreDisplays();
+      }
+    });
 
     // ══════════════ NHANG ══════════════
     function updateWishText() { const sel = document.getElementById('wish-select'); const txt = document.getElementById('wish-text'); if (sel.value) txt.value = sel.value; }
-    function submitNhang() { const wish = document.getElementById('wish-text').value.trim(); if (!wish) { showToast('⚠️ Xin hãy nhập ước nguyện'); return; } showToast('🕯️ Ước nguyện đã được gửi đến chư Phật!'); ducTotal += 15; netScore = ducTotal - toiTotal; updateScoreDisplays(); document.getElementById('wish-text').value = ''; document.getElementById('wish-select').value = ''; }
+    // ══════════════ THẮP NHANG ══════════════
+    function submitNhang() {
+      const wish = document.getElementById('wish-text').value.trim();
+      if (!wish) { showToast('⚠️ Xin hãy nhập ước nguyện'); return; }
 
-    // ══════════════ SCORE ══════════════
+      showToast('🕯️ Ước nguyện đã được gửi đến chư Phật!');
+
+      // TĂNG 15 ĐIỂM CÔNG ĐỨC
+      ducTotal += 15;
+
+      // LƯU VÀ ĐỒNG BỘ REAL-TIME
+      updateScoreDisplays();
+      checkTitleUnlock();
+
+      document.getElementById('wish-text').value = '';
+      document.getElementById('wish-select').value = '';
+    }
+
+    // ══════════════ SCORE & LOCALSTORAGE SAVE ══════════════
     function updateScoreDisplays() {
-      // Tính toán điểm số
+      // 1. Tính toán điểm số mới nhất
       netScore = ducTotal - toiTotal;
 
-      // Helper function để cập nhật text an toàn
+      // 2. LƯU VÀO LOCALSTORAGE NGAY LẬP TỨC
+      localStorage.setItem('ducTotal', ducTotal);
+      localStorage.setItem('toiTotal', toiTotal);
+      localStorage.setItem('moCount', moCount);
+
+      // 3. Cập nhật giao diện (Real-time UI)
       const setText = (id, value) => {
         const el = document.getElementById(id);
         if (el) el.textContent = value;
       };
 
-      // Cập nhật các element
       setText('home-score', netScore.toLocaleString());
-
-      // Thêm dấu '+' nếu là số dương, giữ nguyên nếu là số âm hoặc 0
       const prefix = netScore > 0 ? '+' : '';
-
       setText('duc-total', `+${ducTotal.toLocaleString()}`);
       setText('net-score', `${prefix}${netScore.toLocaleString()}`);
 
-      // THÊM ĐOẠN NÀY: Đồng bộ lá cây với điểm số
+      // 4. Đồng bộ sự phát triển của cây 3D
       if (typeof generateFoliage === 'function') {
         generateFoliage(netScore);
       }
     }
 
     // ══════════════ SỔ ══════════════
+    // ══════════════ SỔ GHI ĐỨC / TỘI ══════════════
     function addEntry(type) {
-      const sel = document.getElementById(type + '-select'); const opt = sel.options[sel.selectedIndex];
+      const sel = document.getElementById(type + '-select');
+      const opt = sel.options[sel.selectedIndex];
       if (!opt.value) { showToast('⚠️ Vui lòng chọn trước'); return; }
-      const pts = parseInt(opt.dataset.pts || 20); const icon = opt.dataset.icon || (type === 'duc' ? '✨' : '❌'); const name = opt.value;
-      const now = new Date(); const timeStr = `Hôm nay, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-      const list = document.getElementById(type + '-entries'); const card = document.createElement('div');
+
+      const pts = parseInt(opt.dataset.pts || 20);
+      const icon = opt.dataset.icon || (type === 'duc' ? '✨' : '❌');
+      const name = opt.value;
+      const now = new Date();
+      const timeStr = `Hôm nay, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+      const list = document.getElementById(type + '-entries');
+      const card = document.createElement('div');
       card.className = `entry-card ${type}-card`;
       card.innerHTML = `<div class="entry-icon">${icon}</div><div class="entry-info"><div class="entry-name">${name}</div><div class="entry-time">${timeStr}</div></div><div class="entry-pts ${type}-pts">${type === 'duc' ? '+' : '-'}${pts}</div>`;
-      list.insertBefore(card, list.firstChild); sel.value = '';
-      if (type === 'duc') { ducTotal += pts; showToast(`🪷 +${pts} điểm công đức!`); }
-      else { toiTotal += pts; showToast(`⚖️ -${pts} điểm. Hãy sám hối!`); }
-      updateScoreDisplays(); checkTitleUnlock();
+      list.insertBefore(card, list.firstChild);
+      sel.value = '';
+
+      // TÍNH ĐIỂM
+      if (type === 'duc') {
+        ducTotal += pts;
+        showToast(`🪷 +${pts} điểm công đức!`);
+      } else {
+        toiTotal += pts;
+        showToast(`⚖️ -${pts} điểm. Hãy sám hối!`);
+      }
+
+      // LƯU VÀ ĐỒNG BỘ REAL-TIME
+      updateScoreDisplays();
+      checkTitleUnlock();
     }
 
     // ══════════════ MODAL / TOAST ══════════════
