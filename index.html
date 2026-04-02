@@ -3541,6 +3541,7 @@
       { id: 't7', icon: '🌟', name: 'Phật Tử Chân Chánh', desc: 'Trọn vẹn trên con đường Phật pháp', req: 8000 },
       { id: 't8', icon: '☀️', name: 'Giác Ngộ Viên Mãn', desc: 'Đạt tới cảnh giới giải thoát', req: 15000 },
     ];
+
     const TITLES_LIMITED = [
       { id: 'l1', icon: '🔥', name: 'Hành Giả Chuỗi Lửa', desc: 'Hoàn thành 7 ngày liên tiếp', req: 'Chuỗi 7 ngày', unlocked: streak >= 7 },
       { id: 'l2', icon: '🌙', name: 'Thiền Giả Đêm Trăng', desc: 'Gõ mõ lúc nửa đêm', req: 'Gõ mõ 0:00–1:00', unlocked: false },
@@ -3550,36 +3551,58 @@
       { id: 'l6', icon: '🌈', name: 'Cầu Vồng Phúc Đức', desc: 'Hoàn thành 100 nhiệm vụ', req: '100 nhiệm vụ', unlocked: false },
     ];
 
-    function getCurrentTitle() { let cur = TITLES_PTS[0]; for (const t of TITLES_PTS) { if (netScore >= t.req) cur = t; } return cur; }
+    function getCurrentTitle() {
+      let cur = TITLES_PTS[0];
+      for (const t of TITLES_PTS) {
+        if (netScore >= t.req) cur = t;
+      }
+      return cur;
+    }
+
+    function syncGlobalTitleBadge() {
+      // 1. Lấy ID danh hiệu đang đeo từ localStorage, nếu không có thì lấy danh hiệu mặc định theo điểm
+      const savedId = localStorage.getItem('equippedTitleId');
+      let curTitle = TITLES_PTS.find(t => t.id === savedId);
+
+      if (!curTitle) {
+        curTitle = getCurrentTitle();
+      }
+
+      // 2. Tìm TẤT CẢ các thẻ badge hiển thị danh hiệu và cập nhật đồng loạt
+      const allBadges = document.querySelectorAll('.user-zone .badge');
+      allBadges.forEach(badge => {
+        badge.textContent = `✦ ${curTitle.name}`;
+      });
+
+      // 3. Nếu đang ở trang Danh Hiệu, cập nhật luôn cái khối "Danh Hiệu Hiện Tại" to đùng
+      const curIconEl = document.getElementById('dh-cur-icon');
+      if (curIconEl) {
+        document.getElementById('dh-cur-icon').textContent = curTitle.icon;
+        document.getElementById('dh-cur-name').textContent = curTitle.name;
+        document.getElementById('dh-cur-desc').textContent = curTitle.desc;
+      }
+    }
 
     function renderTitles() {
+      // Cập nhật badge trên header trước
+      syncGlobalTitleBadge();
+
       const savedId = localStorage.getItem('equippedTitleId');
-      const cur = TITLES_PTS.find(t => t.id === savedId) || TITLES_PTS[0];
-      const elementsToUpdate = {
-        'dh-cur-icon': cur.icon,
-        'dh-cur-name': cur.name,
-        'dh-cur-desc': cur.desc,
-        'title-badge': '✦ ' + cur.name,
-        'nv-badge': '✦ ' + cur.name,
-        'dh-badge': '✦ ' + cur.name
-      };
-      Object.entries(elementsToUpdate).forEach(([id, value]) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-      });
+      const curTitle = TITLES_PTS.find(t => t.id === savedId) || getCurrentTitle();
+
       const pg = document.getElementById('dh-pts-grid');
       if (pg) {
         pg.innerHTML = '';
         TITLES_PTS.forEach(t => {
           const unlocked = netScore >= t.req;
-          const isCur = t.id === cur.id;
+          const isCur = t.id === curTitle.id;
           const div = document.createElement('div');
           div.className = `dh-card ${unlocked ? 'unlocked' : 'locked'}`;
           if (isCur) div.style.boxShadow = '0 0 16px rgba(201,168,76,.3)';
 
           div.innerHTML = `
         ${!unlocked ? '<div class="dh-lock-icon">🔒</div>' : ''}
-        ${isCur ? '<div class="dh-lock-icon" style="opacity:1;font-size:8px;color:gold">ĐEO DANH HIỆU</div>' : ''}
+        ${isCur ? '<div class="dh-lock-icon" style="opacity:1;font-size:8px;color:gold">ĐANG ĐEO</div>' : ''}
         <div class="dh-card-icon">${t.icon}</div>
         <div class="dh-card-name">${t.name}</div>
         <div class="dh-card-pts">${t.req === 0 ? 'Mặc định' : t.req.toLocaleString() + ' đ'}</div>
@@ -3587,15 +3610,20 @@
       `;
           if (unlocked) {
             div.onclick = () => {
-              localStorage.setItem('equippedTitleId', t.id); // Lưu trạng thái đeo vào máy
+              localStorage.setItem('equippedTitleId', t.id); // Lưu trạng thái đeo
               if (typeof showToast === "function") showToast('✦ Đã trang bị: ' + t.name);
-              renderTitles(); // Gọi lại chính nó để cập nhật giao diện toàn trang
+
+              // Gọi hàm đồng bộ để TẤT CẢ các trang nhận danh hiệu mới ngay lập tức
+              syncGlobalTitleBadge();
+              renderTitles(); // Render lại lưới để chuyển chữ "ĐANG ĐEO" sang card mới
             };
             div.style.cursor = 'pointer';
           }
           pg.appendChild(div);
         });
       }
+
+      // ... [GIỮ NGUYÊN phần render lg (dh-limited-grid) của ông] ...
       const lg = document.getElementById('dh-limited-grid');
       if (lg) {
         lg.innerHTML = '';
@@ -3622,7 +3650,6 @@
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-' + name).classList.add('active');
       if (name === 'nhiemvu') renderKanban();
-      //if (name === 'gomo') ren
       if (name === 'danhhieu') renderTitles();
       if (name === 'quyengop') { renderDonors(); initQRs(); }
     }
@@ -3887,8 +3914,14 @@
 
       // Mốc thưởng
       if (moCount === 10) { ducTotal += 100; showModal('Chuông', 'Gõ 10 Tiếng Mõ!', 'Tâm thanh, trí sáng', '+100'); }
+      if (moCount === 25) { ducTotal += 250; showModal('Chuông', 'Gõ 25 Tiếng Mõ!', 'Tâm thanh, trí sáng', '+250'); }
       if (moCount === 50) { ducTotal += 500; showModal('Chuông', 'Gõ 50 Tiếng Mõ!', 'Thiền định sâu sắc', '+500'); }
       if (moCount === 100) { ducTotal += 1000; showModal('Chuông', 'Gõ 100 Tiếng Mõ!', 'Thiền định sâu sắc', '+1000'); }
+      if (moCount === 200) { ducTotal += 2000; showModal('Chuông', 'Gõ 200 Tiếng Mõ!', 'Thiền định thâm sâu', '+2000'); }
+      if (moCount === 300) { ducTotal += 3000; showModal('Chuông Bạc', 'Gõ 300 Tiếng Mõ!', 'Thiền định thâm sâu, công đức viên thành', '+3000'); }
+      if (moCount === 500) { ducTotal += 5000; showModal('Chuông Vàng', 'Gõ 500 Tiếng Mõ!', 'Tâm thanh, trí sáng, công đức viên thành', '+5000'); }
+      if (moCount === 750) { ducTotal += 7500; showModal('Chuông Vàng', 'Gõ 750 Tiếng Mõ!', 'Tâm thanh, trí sáng, công đức viên thành', '+7500'); }
+      if (moCount === 1000) { ducTotal += 10000; showModal('Chuông Vàng', 'Gõ 1000 Tiếng Mõ!', 'Tâm thanh, trí sáng, công đức viên thành', '+10000'); }
 
       // Gọi hàm để lưu và update UI ngay lập tức
       updateScoreDisplays();
@@ -4058,6 +4091,7 @@
 
     // ══════════════ INIT ══════════════
     updateScoreDisplays();
+    syncGlobalTitleBadge(); 
   </script>
 </body>
 
