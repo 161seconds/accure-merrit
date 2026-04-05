@@ -14,10 +14,11 @@ app.use(express.json());
 app.use(cors());
 
 // ══════════════ KẾT NỐI MONGODB ══════════════
-const dbURI = 'mongodb://127.0.0.1:27017/tichduc_db';
-mongoose.connect(dbURI)
+const MONGO_URI = process.env.MONGO_URI;
+
+mongoose.connect(MONGO_URI)
     .then(() => console.log('✦ Chân Nguyên Đã Tụ: Kết nối MongoDB thành công!'))
-    .catch((err) => console.error('❌ Lỗi kết nối Database:', err));
+    .catch(err => console.error('❌ Lỗi kết nối Database:', err));
 
 // ══════════════ API KHỞI TẠO (CŨ) ══════════════
 app.get('/init-db', async (req, res) => {

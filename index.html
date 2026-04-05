@@ -3317,38 +3317,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
-    /*function initializeApp() {
-      let users = JSON.parse(localStorage.getItem('users')) || [];
-      if (!users.find(u => u.username === '161seconds')) {
-        users.push({ username: '161seconds', password: '123', name: '161seconds' });
-        localStorage.setItem('users', JSON.stringify(users));
-      }
-
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-      const guestLinks = document.getElementById('guest-links');
-      const nameDisplay = document.getElementById('user-name-display');
-      const logoutBtn = document.getElementById('logout-btn');
-      const logoutDiv = document.getElementById('logout-divider');
-
-      if (currentUser) {
-        // TRẠNG THÁI: ĐÃ ĐĂNG NHẬP
-        if (guestLinks) guestLinks.style.display = 'none';
-        if (nameDisplay) {
-          nameDisplay.style.display = 'block';
-          nameDisplay.textContent = currentUser.name;
-        }
-        if (logoutBtn) logoutBtn.style.display = 'flex';
-        if (logoutDiv) logoutDiv.style.display = 'block';
-      } else {
-        // TRẠNG THÁI: CHƯA ĐĂNG NHẬP (MẶC ĐỊNH)
-        if (guestLinks) guestLinks.style.display = 'flex';
-        if (nameDisplay) nameDisplay.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-        if (logoutDiv) logoutDiv.style.display = 'none';
-      }
-    }
-    document.addEventListener('DOMContentLoaded', initializeApp);*/
+    const API_BASE_URL = "https://accrue-merit.onrender.com";
 
     // ══════════════ USER MENU ══════════════
     function toggleUserMenu(e) {
@@ -4377,20 +4346,6 @@
       setTimeout(() => t.remove(), 2600);
     }
 
-    /* ══════════════ AI CHAT ══════════════
-    let chatOpen = false;
-    const SUGGESTIONS = ['Gợi ý việc thiện hôm nay', 'Làm gì tăng điểm đức?', 'Cách sám hối tội lỗi?', 'Ý nghĩa bố thí là gì?'];
-    function toggleChat() { chatOpen = !chatOpen; document.getElementById('chat-panel').classList.toggle('open', chatOpen); if (chatOpen && document.getElementById('chat-msgs').children.length === 0) initChat(); }
-    function initChat() { const s = document.getElementById('chat-suggests'); s.innerHTML = ''; SUGGESTIONS.forEach(sg => { const b = document.createElement('div'); b.className = 'chat-sug'; b.textContent = sg; b.onclick = () => sendChatMsg(sg); s.appendChild(b); }); addBotMsg('Chào bạn! Tôi là Trợ Lý Tâm Linh. Hôm nay bạn muốn làm gì tốt đẹp?'); }
-    function chatKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
-    function sendChat() { const input = document.getElementById('chat-input'); const msg = input.value.trim(); if (!msg) return; sendChatMsg(msg); input.value = ''; }
-    function sendChatMsg(msg) { addUserMsg(msg); document.getElementById('chat-suggests').innerHTML = ''; const typingEl = addTypingIndicator(); callAI(msg).then(reply => { typingEl.remove(); addBotMsg(reply); scrollChat(); }); }
-    function addUserMsg(text) { const msgs = document.getElementById('chat-msgs'); const div = document.createElement('div'); div.className = 'msg user'; div.innerHTML = `<div class="msg-bubble">${text.replace(/</g, '&lt;')}</div><div class="msg-time">${getTime()}</div>`; msgs.appendChild(div); scrollChat(); }
-    function addBotMsg(text) { const msgs = document.getElementById('chat-msgs'); const div = document.createElement('div'); div.className = 'msg bot'; div.innerHTML = `<div class="msg-bubble">${text}</div><div class="msg-time">${getTime()}</div>`; msgs.appendChild(div); scrollChat(); }
-    function addTypingIndicator() { const msgs = document.getElementById('chat-msgs'); const div = document.createElement('div'); div.className = 'msg bot'; div.innerHTML = `<div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`; msgs.appendChild(div); scrollChat(); return div; }
-    function scrollChat() { const m = document.getElementById('chat-msgs'); m.scrollTop = m.scrollHeight; }
-    function getTime() { const n = new Date(); return String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0'); }*/
-
     // ══════════════ AI CHAT ══════════════
     let chatOpen = false;
     const SUGGESTIONS = ['Gợi ý việc thiện hôm nay', 'Làm gì tăng điểm đức?', 'Cách sám hối tội lỗi?', 'Ý nghĩa bố thí là gì?'];
@@ -4485,7 +4440,7 @@
     // --- HÀM callAI CHÍNH THỨC NỐI VỚI BACKEND ---
     async function callAI(userMsg) {
       try {
-        const response = await fetch('http://localhost:5000/api/chat', {
+        const response = await fetch(`${API_BASE_URL}/api/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: userMsg })
