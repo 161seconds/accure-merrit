@@ -2557,6 +2557,88 @@
         opacity: 1;
       }
     }
+
+    @keyframes fire-pulse {
+      0% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 2px rgba(255, 69, 0, 0.4));
+      }
+
+      50% {
+        transform: scale(1.2);
+        filter: drop-shadow(0 0 12px rgba(255, 69, 0, 1));
+      }
+
+      100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 2px rgba(255, 69, 0, 0.4));
+      }
+    }
+
+    .streak-fire {
+      font-size: 28px;
+      display: inline-block;
+      transform-origin: bottom center;
+      animation: fire-pulse 1.2s infinite ease-in-out;
+      margin-right: 10px;
+    }
+
+    @keyframes gold-glow {
+      0% {
+        text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);
+      }
+
+      50% {
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.5);
+      }
+
+      100% {
+        text-shadow: 0 0 3px rgba(255, 215, 0, 0.3);
+      }
+    }
+
+    .streak-bonus {
+      font-weight: 700;
+      color: #FFD700;
+      animation: gold-glow 2s infinite alternate;
+      font-size: 13px;
+      background: rgba(255, 215, 0, 0.1);
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .streak-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.8), rgba(20, 20, 20, 0.9));
+      border-radius: 12px;
+      border: 1px solid rgba(255, 69, 0, 0.2);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+      margin-bottom: 15px;
+    }
+
+    .streak-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .streak-days {
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .streak-desc {
+      font-size: 11px;
+      color: #aaa;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
   </style>
 </head>
 
@@ -2697,7 +2779,7 @@
           <div class="streak-info">
             <div class="streak-fire">🔥</div>
             <div>
-              <div class="streak-days" id="streak-count">7</div>
+              <div class="streak-days" id="streak-count"></div>
               <div class="streak-desc">ngày liên tiếp</div>
             </div>
           </div>
@@ -3341,33 +3423,6 @@
       document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
     });
 
-    /*function checkAuthState() {
-      //initMockDB();
-      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-      const guestLinks = document.getElementById('guest-links');
-      const nameDisplay = document.getElementById('user-name-display');
-      const logoutBtn = document.getElementById('logout-btn');
-      const logoutDiv = document.getElementById('logout-divider');
-
-      if (currentUser) {
-        // ĐÃ ĐĂNG NHẬP
-        if (guestLinks) guestLinks.style.display = 'none';
-        if (nameDisplay) {
-          nameDisplay.style.display = 'block';
-          nameDisplay.textContent = currentUser.name;
-        }
-        if (logoutBtn) logoutBtn.style.display = 'flex';
-        if (logoutDiv) logoutDiv.style.display = 'block';
-      } else {
-        // CHƯA ĐĂNG NHẬP
-        if (guestLinks) guestLinks.style.display = 'flex';
-        if (nameDisplay) nameDisplay.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-        if (logoutDiv) logoutDiv.style.display = 'none';
-      }
-    }*/
-
     function initSubpageBackgrounds() {
       const subpages = ['page-nhiemvu', 'page-nhang', 'page-gomo', 'page-duc', 'page-toi', 'page-danhhieu', 'page-quyengop'];
       subpages.forEach(id => {
@@ -3459,68 +3514,86 @@
       document.querySelectorAll('.qg-amt-btn').forEach(b => b.classList.remove('active'));
       el.classList.add('active');
     }
+    // ============= Streak ===============
+    function updateStreakDisplay() {
+      const streakEl = document.getElementById('streak-count');
+      const bonusEl = document.querySelector('.streak-bonus');
+
+      if (!streakEl) return;
+
+      // 1. Gắn số ngày hiện tại (lấy từ biến toàn cục streak)
+      const currentStreak = typeof streak !== 'undefined' ? streak : 0;
+      streakEl.innerText = currentStreak;
+
+      if (bonusEl) {
+        const bonusPercent = Math.min(currentStreak * 5, 50);
+
+        if (currentStreak > 0) {
+          bonusEl.innerText = `+${bonusPercent}% điểm thưởng`;
+          bonusEl.style.opacity = '1';
+          bonusEl.style.color = 'var(--gold-bright, #FFD700)';
+        } else {
+          bonusEl.innerText = `+0% điểm thưởng`;
+          bonusEl.style.opacity = '0.4';
+        }
+      }
+    }
 
     // ══════════════ DONORS ══════════════
     async function renderDonors() {
-      const c = document.getElementById('donors-list');
+      const container = document.getElementById('donors-list');
       const totalEl = document.getElementById('qg-total');
 
-      // Hiển thị trạng thái đang tải
-      c.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--gold-dim);">Đang kết nối đạo tràng... ☸</div>';
+      if (!container) return;
+      container.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--gold-dim);">Đang kết nối đạo tràng... ☸</div>';
 
       try {
-        // Gọi API lấy dữ liệu từ Backend Node.js
-        const res = await fetch('http://localhost:5000/api/donations');
+        const res = await fetch('https://accrue-merit.onrender.com/api/donations');
         const data = await res.json();
 
-        // 1. Cập nhật Tổng tiền (tự động cộng dồn từ DB)
         if (totalEl && data.totalAmount !== undefined) {
           totalEl.textContent = data.totalAmount.toLocaleString('vi-VN') + ' VND';
         }
 
-        // 2. Vẽ danh sách người quyên góp
-        c.innerHTML = '';
+        const list = data.donations || [];
+        container.innerHTML = '';
 
-        if (!data.donations || data.donations.length === 0) {
-          c.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--gold-dim);">Chưa có dữ liệu cúng dường.</div>';
+        if (list.length === 0) {
+          container.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--gold-dim);">Chưa có dữ liệu cúng dường.</div>';
           return;
         }
 
-        data.donations.forEach(d => {
+        list.forEach(d => {
           const el = document.createElement('div');
           el.className = 'donor-item';
 
-          const amtStr = d.amount.toLocaleString('vi-VN') + 'đ';
-          const av = ['🧘', '🙏', '💐', '☯️', '🌸'][Math.floor(Math.random() * 5)];
+          const avatars = ['🧘', '🙏', '💐', '☯️', '🌸'];
+          const av = d.avatar || avatars[Math.floor(Math.random() * avatars.length)];
+
+          const amtStr = (d.amount || 0).toLocaleString('vi-VN') + 'đ';
 
           el.innerHTML = `
-            <div class="donor-avatar">${av}</div>
-            <div class="donor-info">
-              <div class="donor-name">${d.donorName}</div>
-              ${d.message ? `<div class="donor-msg">"${d.message}"</div>` : ''}
-            </div>
-            <div style="text-align:right;flex-shrink:0">
-              <div class="donor-amt">${amtStr}</div>
-              <div class="donor-time">Vừa xong</div>
-            </div>
-          `;
-          c.appendChild(el);
+        <div class="donor-avatar">${av}</div>
+        <div class="donor-info">
+          <div class="donor-name">${d.donorName || 'Thí chủ ẩn danh'}</div>
+          ${d.message ? `<div class="donor-msg">"${d.message}"</div>` : ''}
+        </div>
+        <div style="text-align:right; flex-shrink:0">
+          <div class="donor-amt">${amtStr}</div>
+          <div class="donor-time">Vừa xong</div>
+        </div>
+      `;
+          container.appendChild(el);
         });
-      } catch (err) {
-        console.error("Lỗi fetch donations:", err);
-        c.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: #E8A090;">❌ Không thể tải dữ liệu quyên góp</div>';
-      }
-    }
 
-    function renderDonors() {
-      const c = document.getElementById('donors-list');
-      c.innerHTML = '';
-      DONORS.forEach(d => {
-        const el = document.createElement('div');
-        el.className = 'donor-item';
-        el.innerHTML = `<div class="donor-avatar">${d.av}</div><div class="donor-info"><div class="donor-name">${d.name}</div>${d.msg ? `<div class="donor-msg">"${d.msg}"</div>` : ''}</div><div style="text-align:right;flex-shrink:0"><div class="donor-amt">${d.amt}</div><div class="donor-time">${d.time}</div></div>`;
-        c.appendChild(el);
-      });
+        if (typeof DONORS !== 'undefined') {
+          DONORS = list;
+        }
+
+      } catch (err) {
+        console.error("❌ Lỗi thỉnh kinh quyên góp:", err);
+        container.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: #E8A090;">❌ Không thể kết nối tới đạo tràng</div>';
+      }
     }
 
     // ══════════════ KHỞI TẠO BIẾN TRỐNG ══════════════
@@ -3529,37 +3602,59 @@
     let TITLES_PTS = [];
     let TITLES_LIMITED = [];
 
-    // ══════════════ API: TẢI MASTER DATA TỪ MÂY ══════════════
     async function loadSystemData() {
       try {
-        const res = await fetch('http://localhost:5000/api/system-data');
-        const data = await res.json();
+        const response = await fetch(`${API_BASE_URL}/api/system-data`);
+        if (!response.ok) throw new Error(`Server báo lỗi: ${response.status}`);
 
-        // Phân loại data lấy về thành các mảng tương ứng cho giao diện
-        data.missions.forEach(m => {
-          if (m.isChain) {
-            CHAINS.push({ icon: m.icon, name: m.name, desc: m.desc, pts: m.pts, chainDays: m.chainDays, currentDays: 0 }); // currentDays lưu tạm ở 0
-          } else {
-            MISSIONS.push({ id: m.id, icon: m.icon, name: m.name, desc: m.desc, pts: m.pts, streakBonus: m.streakBonus, col: 'todo' }); // Mặc định ở cột Chưa Làm
-          }
-        });
+        const data = await response.json();
 
-        data.titles.forEach(t => {
+        if (typeof TITLES_PTS !== 'undefined') TITLES_PTS.length = 0;
+        if (typeof TITLES_LIMITED !== 'undefined') TITLES_LIMITED.length = 0;
+
+        // Lưu danh hiệu
+        const titlesArray = data.titles || [];
+        titlesArray.forEach(t => {
           if (t.isLimited) {
-            // check unlocked tạm thời bằng false, sau này làm backend user tiến độ sẽ cập nhật
             TITLES_LIMITED.push({ id: t.id, icon: t.icon, name: t.name, desc: t.desc, req: t.reqText, unlocked: false });
           } else {
             TITLES_PTS.push({ id: t.id, icon: t.icon, name: t.name, desc: t.desc, req: t.req });
           }
         });
 
-        // Vẽ lại giao diện sau khi đã nạp đủ đạn
-        renderKanban();
-        renderTitles();
-        syncGlobalTitleBadge();
+        if (typeof renderTitles === 'function') renderTitles();
+        if (typeof syncGlobalTitleBadge === 'function') syncGlobalTitleBadge();
+
+        console.log("✦ Hệ thống Tâm Linh đã sẵn sàng!");
+
       } catch (err) {
-        console.error("Lỗi thỉnh kinh từ Database:", err);
-        showToast("⚠️ Mất kết nối tới Hệ Thống Tâm Linh");
+        console.error("❌ Lỗi thỉnh kinh từ Database:", err);
+        if (typeof showToast === 'function') showToast("⚠️ Mất kết nối tới Hệ Thống Tâm Linh");
+      }
+    }
+
+    async function loadUserKanban() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser) return;
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/user-missions/${currentUser._id}`);
+        const data = await response.json();
+
+        if (data && data.tasks) {
+          MISSIONS = data.tasks.map(t => ({
+            id: t.id,
+            name: t.name,
+            desc: t.desc,
+            pts: t.pts,
+            icon: t.icon || '📜',
+            col: t.status,
+            streakBonus: t.streakBonus
+          }));
+          renderKanban();
+        }
+      } catch (err) {
+        console.error("❌ Lỗi tải Kanban từ DB:", err);
       }
     }
 
@@ -3619,26 +3714,41 @@
     function onDrop(e, col) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); if (dragId) dropMission(dragId, col); }
 
     // ══════════════ NHIỆM VỤ (KANBAN) ══════════════
-    function dropMission(id, col) {
+    // Đã sửa để gọi API lưu DB
+    async function dropMission(id, col) {
       const m = MISSIONS.find(x => x.id === id);
       if (!m) return;
 
       const prev = m.col;
       m.col = col;
 
+      // Gọi API để lưu trạng thái mới vào Database
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (currentUser) {
+        fetch(`${API_BASE_URL}/api/user-missions/update-status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: currentUser._id,
+            missionId: id,
+            status: col
+          })
+        }).catch(e => console.error("Lỗi đồng bộ Kanban:", e));
+      }
+
+      // Nếu nhiệm vụ được kéo sang Done
       if (col === 'done' && prev !== 'done') {
         const mult = m.streakBonus && streak >= 3 ? 1.5 : 1;
         const pts = Math.round(m.pts * mult);
 
         // TĂNG ĐIỂM KHI HOÀN THÀNH
         ducTotal += pts;
-
-        // LƯU VÀ ĐỒNG BỘ REAL-TIME
         updateScoreDisplays();
 
         setTimeout(() => showModal(m.icon, 'Nhiệm Vụ Hoàn Thành!', m.name, '+' + pts), 200);
         checkTitleUnlock();
       }
+
       renderKanban();
     }
 
@@ -4204,59 +4314,81 @@
       window.requestAnimationFrame(step);
     }
 
-    // ══════════════ SCORE & LOCALSTORAGE SAVE ══════════════
     // ══════════════ AUTO-SYNC ĐIỂM LÊN DATABASE ══════════════
     function syncToServer() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      if (!currentUser) return; // Nếu là khách vãng lai thì không lưu
+      if (!currentUser) return;
 
-      fetch('http://localhost:5000/api/sync', {
+      const API_URL = 'https://accrue-merit.onrender.com/api/sync';
+
+      fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: currentUser.username,
           stats: {
-            ducTotal: ducTotal,
-            toiTotal: toiTotal,
-            moCount: moCount,
-            streak: streak
+            ducTotal: typeof ducTotal !== 'undefined' ? ducTotal : 0,
+            toiTotal: typeof toiTotal !== 'undefined' ? toiTotal : 0,
+            moCount: typeof moCount !== 'undefined' ? moCount : 0,
+            streak: typeof streak !== 'undefined' ? streak : 0
           }
         })
       })
-        .then(res => res.json())
-        .then(data => console.log('Đã đồng bộ:', data.message))
-        .catch(err => console.error('Lỗi đồng bộ:', err));
+        .then(res => {
+          if (!res.ok) throw new Error(`Server báo lỗi: ${res.status}`);
+          return res.json();
+        })
+        .catch(err => {
+          console.error('❌ Lỗi đồng bộ:', err);
+        });
     }
 
     // ══════════════ SCORE & LOCALSTORAGE SAVE ══════════════
     function updateScoreDisplays() {
-      const oldNetScore = netScore;
-      netScore = ducTotal - toiTotal;
+      // 1. Tính toán lại điểm Net Score (Tổng Đức - Tổng Tội)
+      netScore = (ducTotal || 0) - (toiTotal || 0);
 
-      localStorage.setItem('ducTotal', ducTotal);
-      localStorage.setItem('toiTotal', toiTotal);
-      localStorage.setItem('moCount', moCount);
+      // 2. Lưu vào máy (Local Storage) để không bị mất khi F5
+      localStorage.setItem('ducTotal', ducTotal || 0);
+      localStorage.setItem('toiTotal', toiTotal || 0);
+      localStorage.setItem('moCount', moCount || 0);
 
+      // 3. Cập nhật các con số trên giao diện
       const setText = (id, value) => {
         const el = document.getElementById(id);
         if (el) el.textContent = value;
       };
+
       const prefix = netScore > 0 ? '+' : '';
-      setText('duc-total', `+${ducTotal.toLocaleString()}`);
+      setText('duc-total', `+${(ducTotal || 0).toLocaleString()}`);
       setText('net-score', `${prefix}${netScore.toLocaleString()}`);
 
+      // 4. Hiệu ứng nhảy số ở màn hình chính
       const homeScoreEl = document.getElementById('home-score');
       if (homeScoreEl) {
         const currentDisplayed = parseInt(homeScoreEl.textContent.replace(/,/g, '')) || 0;
-        animateValue(homeScoreEl, currentDisplayed, netScore, 1000);
+        if (typeof animateValue === 'function') {
+          animateValue(homeScoreEl, currentDisplayed, netScore, 1000);
+        } else {
+          // Đề phòng hàm animateValue bị lỗi, vẫn hiển thị được số
+          homeScoreEl.textContent = netScore.toLocaleString();
+        }
       }
 
+      // 5. Cập nhật cây cối (Foliage) dựa trên điểm số
       if (typeof generateFoliage === 'function') {
         generateFoliage(netScore);
       }
 
-      // THÊM DÒNG NÀY ĐỂ BẮN DATA LÊN DATABASE SAU KHI CẬP NHẬT TRÊN MÀN HÌNH
-      syncToServer();
+      // 6. Cập nhật Lửa Chuỗi ngày (Streak)
+      if (typeof updateStreakDisplay === 'function') {
+        updateStreakDisplay();
+      }
+
+      // 7. Đồng bộ dữ liệu mới nhất lên Server Render (Atlas)
+      if (typeof syncToServer === 'function') {
+        syncToServer();
+      }
     }
 
     // ══════════════ LOAD FONT ══════════════
@@ -4463,10 +4595,10 @@
     function getFallback(msg) { const r = ['Hôm nay bạn có thể nhường chỗ cho người lớn tuổi, hoặc nhặt rác ở vỉa hè gần nhà. Mỗi việc nhỏ đều tích lũy phúc đức! 🪷', 'Nam mô A Di Đà Phật 🙏 Bố thí không chỉ là vật chất — một lời động viên đúng lúc cũng là tích đức rồi.', 'Sám hối chân thành là bước đầu tịnh hóa tâm. Nhìn nhận lỗi lầm và quyết tâm không tái phạm. 💙', 'Ăn chay dù chỉ một bữa cũng gieo nhân từ bi. Hôm nay bạn thử thực hành không? 🥗']; return r[Math.floor(Math.random() * r.length)]; }
 
     // ══════════════ INIT ══════════════
-    document.addEventListener('DOMContentLoaded', () => {
-      loadSystemData();
-
+    document.addEventListener('DOMContentLoaded', async () => {
       loadSavedFont();
+      await loadSystemData();
+      await loadUserKanban();
       // 1. Đồng bộ người dùng cho mọi header
       syncAllHeaders();
       // 2. Tạo hiệu ứng nền cho các trang phụ

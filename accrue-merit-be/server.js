@@ -140,6 +140,70 @@ const Title = mongoose.model('Title', new mongoose.Schema({
     isLimited: { type: Boolean, default: false }, reqText: String
 }));
 
+// 1. API LẤY DANH SÁCH NHIỆM VỤ CỦA USER HÔM NAY
+app.get('/api/user-missions/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const today = new Date().toISOString().split('T')[0]; // VD: "2026-04-05"
+
+        // Câu Aggregation ta đã viết ở trên
+        // Trong server.js -> API /api/user-missions/:userId
+        const userKanban = await UserMission.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(userId), date: today } },
+            { $unwind: "$kanban" },
+            {
+                $lookup: {
+                    from: "missions",
+                    localField: "kanban.missionId",
+                    foreignField: "id",
+                    as: "mission_detail"
+                }
+            },
+            { $unwind: "$mission_detail" },
+            {
+                $group: {
+                    _id: "$_id",
+                    date: { $first: "$date" },
+                    tasks: {
+                        $push: {
+                            id: "$kanban.missionId",
+                            status: "$kanban.status",
+                            name: "$mission_detail.name",
+                            desc: "$mission_detail.description",
+                            pts: "$mission_detail.pts", 
+                            icon: "$mission_detail.icon",
+                            streakBonus: "$mission_detail.streakBonus" 
+                        }
+                    }
+                }
+            }
+        ]);
+
+        if (!userKanban || userKanban.length === 0) {
+            return res.json({ tasks: [] });
+        }
+        res.json({ tasks: userKanban[0].tasks });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 2. API CẬP NHẬT TRẠNG THÁI KHI KÉO THẢ KANBAN
+app.post('/api/user-missions/update-status', async (req, res) => {
+    try {
+        const { userId, missionId, status } = req.body;
+        const today = new Date().toISOString().split('T')[0];
+
+        // Cập nhật lại status của 1 mission cụ thể trong mảng kanban
+        await UserMission.updateOne(
+            { userId: userId, date: today, "kanban.missionId": missionId },
+            { $set: { "kanban.$.status": status } }
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 // ══════════════ API BƠM DATA NHIỆM VỤ & DANH HIỆU ══════════════
 app.get('/seed-system', async (req, res) => {
     try {
@@ -198,8 +262,6 @@ app.get('/api/system-data', async (req, res) => {
     }
 });
 
-// ══════════════ API TRỢ LÝ TÂM LINH (GEMINI AI) ══════════════
-// ══════════════ API TRỢ LÝ TÂM LINH (GEMINI AI) ══════════════
 // ══════════════ API TRỢ LÝ TÂM LINH (GEMINI AI - BẢN THIỀN SƯ) ══════════════
 app.post('/api/chat', async (req, res) => {
     try {

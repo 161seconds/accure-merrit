@@ -358,20 +358,28 @@
         });
 
         const data = await response.json();
-        if (!response.ok) {
-          alert(data.error); // Báo sai pass
-        } else {
-          // LƯU DATA LẤY TỪ DATABASE VÀO LOCALSTORAGE
-          localStorage.setItem('currentUser', JSON.stringify(data.user));
-          localStorage.setItem('ducTotal', data.user.stats.ducTotal);
-          localStorage.setItem('toiTotal', data.user.stats.toiTotal);
-          localStorage.setItem('moCount', data.user.stats.moCount);
 
-          alert('Đăng nhập thành công ✦');
-          window.location.href = 'index.html'; // Chuyển về trang chủ
+        if (!response.ok) {
+          alert(data.error || "Đăng nhập thất bại!");
+          return;
         }
+
+        const user = data.user;
+        const stats = user.stats || {};
+
+        localStorage.setItem('currentUser', JSON.stringify(user));
+
+        localStorage.setItem('ducTotal', stats.ducTotal || 0);
+        localStorage.setItem('toiTotal', stats.toiTotal || 0);
+        localStorage.setItem('moCount', stats.moCount || 0);
+        localStorage.setItem('streak', stats.streak || 0);
+
+        alert('Đăng nhập thành công ✦');
+
+        window.location.href = 'index.html';
+
       } catch (err) {
-        console.error(err);
+        console.error("Lỗi kết nối Server:", err);
       }
     }
 
