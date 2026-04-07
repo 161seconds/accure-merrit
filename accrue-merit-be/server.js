@@ -45,13 +45,30 @@ app.post('/api/register', async (req, res) => {
         const { username, password, name } = req.body;
 
         const exists = await User.findOne({ username });
-        if (exists) return res.status(400).json({ error: 'Tên đăng nhập đã tồn tại!' });
+        if (exists) {
+            return res.status(400).json({ error: 'Tên đăng nhập đã tồn tại!' });
+        }
 
-        const newUser = new User({ username, password, name });
+        const newUser = new User({
+            username: username,
+            password: password,
+            name: name || username,
+            avatar: '☸',
+            stats: {
+                ducTotal: 0,
+                toiTotal: 0,
+                moCount: 0,
+                streak: 0
+            },
+            settings: { equippedTitleId: 't1' }
+        });
+
         await newUser.save();
         res.json({ message: 'Đăng ký thành công!', user: newUser });
+
     } catch (err) {
-        res.status(500).json({ error: 'Lỗi server: ' + err.message });
+        console.error("Lỗi Đăng Ký:", err);
+        res.status(400).json({ error: 'Lỗi Database: ' + err.message });
     }
 });
 
@@ -170,9 +187,9 @@ app.get('/api/user-missions/:userId', async (req, res) => {
                             status: "$kanban.status",
                             name: "$mission_detail.name",
                             desc: "$mission_detail.description",
-                            pts: "$mission_detail.pts", 
+                            pts: "$mission_detail.pts",
                             icon: "$mission_detail.icon",
-                            streakBonus: "$mission_detail.streakBonus" 
+                            streakBonus: "$mission_detail.streakBonus"
                         }
                     }
                 }
@@ -262,7 +279,7 @@ app.get('/api/system-data', async (req, res) => {
     }
 });
 
-// ══════════════ API TRỢ LÝ TÂM LINH (GEMINI AI - BẢN THIỀN SƯ) ══════════════
+// ══════════════ API TRỢ LÝ TÂM LINH ══════════════
 app.post('/api/chat', async (req, res) => {
     try {
         const { message } = req.body;

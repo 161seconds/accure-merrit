@@ -256,6 +256,93 @@
         padding: 30px 20px;
       }
     }
+
+    /* ══ CUSTOM DIALOG (THAY THẾ ALERT) ══ */
+    .dialog-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.3s;
+    }
+
+    .dialog-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .dialog-box {
+      background: linear-gradient(135deg, #1A1208, #0D0A04);
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      padding: 24px;
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+      transform: scale(0.8);
+      transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .dialog-overlay.open .dialog-box {
+      transform: scale(1);
+    }
+
+    .dg-title {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      color: var(--gold-light);
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .dg-msg {
+      font-size: 13px;
+      color: var(--parchment, #F0E6C8);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .dg-btns {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .dg-btn {
+      padding: 8px 24px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+      min-width: 100px;
+      transition: 0.2s;
+    }
+
+    .dg-btn.confirm {
+      background: var(--gold-dim);
+      color: #000;
+    }
+
+    .dg-btn.confirm:hover {
+      background: var(--gold-light);
+    }
+
+    .dg-btn.danger {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .dg-btn.danger:hover {
+      background: #E05040;
+    }
   </style>
 </head>
 
@@ -296,9 +383,37 @@
       </form>
     </div>
   </div>
+  <div class="dialog-overlay" id="custom-dialog">
+    <div class="dialog-box">
+      <div class="dg-title" id="dg-title">Thông báo</div>
+      <div class="dg-msg" id="dg-msg">Nội dung</div>
+      <div class="dg-btns">
+        <button class="dg-btn confirm" id="dg-confirm-btn" onclick="closeDialog()">Đồng ý</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     // Tao hieu ung bui vang
+    let dialogCallback = null;
+
+    function openDialog(title, msg, btnStyle, callback) {
+      document.getElementById('dg-title').textContent = title;
+      document.getElementById('dg-msg').textContent = msg;
+
+      const confirmBtn = document.getElementById('dg-confirm-btn');
+      confirmBtn.className = `dg-btn ${btnStyle}`;
+
+      dialogCallback = callback;
+      document.getElementById('custom-dialog').classList.add('open');
+    }
+
+    function closeDialog() {
+      document.getElementById('custom-dialog').classList.remove('open');
+      if (dialogCallback) dialogCallback();
+      dialogCallback = null;
+    }
+
     function createParticles() {
       const container = document.createElement('div');
       container.className = 'bg-particles';
@@ -360,7 +475,8 @@
         const data = await response.json();
 
         if (!response.ok) {
-          alert(data.error || "Đăng nhập thất bại!");
+          // Báo lỗi bằng Popup
+          openDialog('Đăng Nhập Thất Bại', data.error || "Sai tài khoản hoặc mật khẩu!", 'danger', null);
           return;
         }
 
@@ -368,18 +484,19 @@
         const stats = user.stats || {};
 
         localStorage.setItem('currentUser', JSON.stringify(user));
-
         localStorage.setItem('ducTotal', stats.ducTotal || 0);
         localStorage.setItem('toiTotal', stats.toiTotal || 0);
         localStorage.setItem('moCount', stats.moCount || 0);
         localStorage.setItem('streak', stats.streak || 0);
 
-        alert('Đăng nhập thành công ✦');
-
-        window.location.href = 'index.html';
+        // Báo thành công và chuyển trang sau khi bấm Đồng ý
+        openDialog('Thành Công', 'Đăng nhập thành công ✦', 'confirm', () => {
+          window.location.href = 'index.html';
+        });
 
       } catch (err) {
         console.error("Lỗi kết nối Server:", err);
+        openDialog('Lỗi Mạng', 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.', 'danger', null);
       }
     }
 
