@@ -1502,6 +1502,7 @@
     .chain-section {
       flex-shrink: 0;
       margin-top: 8px;
+      padding-bottom: 46px;
     }
 
     .chain-ttl {
@@ -2984,6 +2985,313 @@
     .purpose-text {
       font-size: 11px;
     }
+
+    /* ══════════════════RESPONSIVE DESIGN═══════════════ */
+
+    @media (max-width: 768px) {
+
+      /* Chung */
+      .app-header {
+        padding: 12px 16px;
+      }
+
+      .page-h {
+        font-size: 20px;
+      }
+
+      .sub-content {
+        padding-top: 60px;
+        padding-bottom: 70px;
+      }
+
+      /* 1. Trang Chủ (Home) */
+      .hero-h1 {
+        font-size: 42px;
+      }
+
+      .hero-sub {
+        font-size: 10px;
+      }
+
+      .score-num {
+        font-size: 32px;
+      }
+
+      .lanterns {
+        gap: 12px;
+        right: 4%;
+        transform: scale(0.8);
+        transform-origin: top right;
+      }
+
+      .tasks-card {
+        top: auto;
+        bottom: 15%;
+        right: 50%;
+        transform: translateX(50%);
+        width: 90%;
+        max-width: 320px;
+        padding: 12px;
+      }
+
+      .home-btns {
+        flex-direction: row;
+        bottom: 7%;
+        right: 50%;
+        transform: translateX(50%);
+        width: 90%;
+        max-width: 320px;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .hbtn {
+        min-width: auto;
+        flex: 1;
+        font-size: 12px;
+        padding: 10px;
+      }
+
+      /* 2. Trang Nhiệm Vụ (Kanban) */
+      .streak-row {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+      }
+
+      .streak-bonus {
+        align-self: flex-start;
+      }
+
+      /* Biến Kanban thành dạng vuốt ngang trên Mobile */
+      .kanban {
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .kanban-col {
+        min-width: 260px;
+        /* Độ rộng cố định cho mỗi cột để vuốt */
+        scroll-snap-align: start;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        padding-right: 10px;
+        margin-right: 10px;
+      }
+
+      .kanban-col:last-child {
+        border-right: none;
+        margin-right: 0;
+        padding-right: 0;
+      }
+
+      /* 3. Trang Thắp Nhang */
+      .altar-svg-wrap {
+        transform: scale(0.85);
+        transform-origin: bottom center;
+        margin-bottom: -15px;
+      }
+
+      .prayer-panel {
+        padding: 10px;
+      }
+
+      .uc-textarea {
+        height: 46px;
+      }
+
+      /* 4. Trang Gõ Mõ */
+      .mo-count {
+        font-size: 40px;
+      }
+
+      .mo-bowl {
+        transform: scale(0.9);
+      }
+
+      .mo-stick {
+        transform: translateX(-50%) rotate(-20deg) scale(0.9);
+        top: -45px;
+      }
+
+      /* 5. Trang Sổ Đức / Sổ Tội */
+      .score-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .sb-net {
+        text-align: left;
+        border-top: 1px dashed rgba(201, 168, 76, 0.3);
+        padding-top: 8px;
+        width: 100%;
+      }
+
+      .so-top {
+        flex-direction: column;
+      }
+
+      .so-select {
+        width: 100%;
+      }
+
+      .so-add-btn {
+        width: 100%;
+        padding: 12px;
+      }
+
+      /* 6. Trang Danh Hiệu */
+      .dh-current {
+        padding: 10px;
+      }
+
+      .dh-cur-icon {
+        font-size: 28px;
+      }
+
+      .dh-cur-name {
+        font-size: 15px;
+      }
+
+      .dh-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .dh-card {
+        padding: 8px;
+      }
+
+      .dh-card-icon {
+        font-size: 20px;
+      }
+
+      .dh-card-name {
+        font-size: 9px;
+      }
+
+      /* 7. Trang Quyên Góp */
+      .qg-split-layout {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .qg-left-col {
+        flex: none;
+      }
+
+      .qg-hero {
+        padding: 15px;
+      }
+
+      .qg-info-purpose {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .merit-box-container {
+        min-height: 200px;
+        padding: 20px 0;
+      }
+
+      /* Popup Donate */
+      .donate-modal-box {
+        padding: 15px !important;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .dm-layout {
+        flex-direction: column-reverse;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .dm-left {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .qg-btn-amt {
+        padding: 10px 5px;
+        font-size: 13px;
+      }
+
+      .dm-right {
+        padding: 12px;
+        width: 100%;
+      }
+
+      .qg-qr-img-box {
+        width: 160px;
+        height: 160px;
+        margin-bottom: 10px;
+      }
+
+      .qg-qr-info-acc {
+        font-size: 16px;
+      }
+
+      /* 8. Chat Bot AI */
+      .chat-panel {
+        width: calc(100vw - 24px);
+        height: 50vh;
+        bottom: 80px;
+        left: 12px;
+        right: 12px;
+      }
+
+      .chat-fab {
+        bottom: 65px;
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+      }
+    }
+
+    /* ── DÀNH CHO ĐIỆN THOẠI SIÊU NHỎ (Dưới 380px - VD: iPhone SE) ── */
+    @media (max-width: 380px) {
+      .hero-h1 {
+        font-size: 34px;
+      }
+
+      .logo-name {
+        display: none;
+        /* Ẩn chữ Tích Đức để đỡ chật Menu */
+      }
+
+      .dh-grid {
+        grid-template-columns: 1fr;
+        /* Danh hiệu xếp 1 cột */
+      }
+
+      .dm-left {
+        grid-template-columns: 1fr 1fr;
+        /* Popup quyên góp xếp 2 cột */
+      }
+
+      .altar-svg-wrap {
+        transform: scale(0.7);
+        margin-bottom: -30px;
+      }
+    }
+
+    /* ── THANH ĐIỀU HƯỚNG DƯỚI CÙNG (An toàn với tai thỏ/Home bar của iPhone) ── */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .app-footer {
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      }
+
+      .sub-content {
+        padding-bottom: calc(64px + env(safe-area-inset-bottom));
+      }
+    }
   </style>
 </head>
 
@@ -3648,7 +3956,7 @@
         </div>
       </div>
 
-      <div class="qg-content" style="overflow: visible;">
+      <div class="qg-content">
         <div class="qg-split-layout">
 
           <div class="qg-left-col">
@@ -3869,11 +4177,7 @@
       document.getElementById('qr-transfer-content').textContent = transferContent;
 
       const qrBox = document.getElementById('main-qr-img');
-
-      qrBox.innerHTML = `<img src="${MY_QR_IMAGES[amountKey]}" alt="QR ${amountKey}" style="width:100%; border-radius:4px;">`;
-
-      const seedMap = { '10k': 1n, '20k': 2n, '50k': 5n, '100k': 10n, '200k': 20n, '500k': 50n };
-      qrBox.innerHTML = makeQRSvg(seedMap[amountKey], 130);
+      qrBox.innerHTML = `<img src="${MY_QR_IMAGES[amountKey]}" alt="QR ${amountKey}" style="width:100%; height:100%; border-radius:8px; object-fit:contain;">`;
     }
 
     function openDonateModal() {
@@ -3973,8 +4277,9 @@
 
         if (typeof TITLES_PTS !== 'undefined') TITLES_PTS.length = 0;
         if (typeof TITLES_LIMITED !== 'undefined') TITLES_LIMITED.length = 0;
+        CHAINS = [];
 
-        // Lưu danh hiệu
+        // 1. LƯU DANH HIỆU
         const titlesArray = data.titles || [];
         titlesArray.forEach(t => {
           if (t.isLimited) {
@@ -3984,8 +4289,31 @@
           }
         });
 
+        // 2. LƯU CHUỖI NHIỆM VỤ (CHAINS)
+        const missionsArray = data.missions || [];
+        missionsArray.forEach(m => {
+          if (m.isChain) {
+            const currentStreak = typeof streak !== 'undefined' ? streak : 0;
+            const progressDays = Math.min(currentStreak, m.chainDays || 7);
+
+            CHAINS.push({
+              id: m.id,
+              icon: m.icon,
+              name: m.name,
+              desc: m.desc,
+              pts: m.pts,
+              chainDays: m.chainDays || 7,
+              currentDays: progressDays
+            });
+          }
+        });
+
         if (typeof renderTitles === 'function') renderTitles();
         if (typeof syncGlobalTitleBadge === 'function') syncGlobalTitleBadge();
+
+        if (document.getElementById('page-nhiemvu').classList.contains('active')) {
+          renderKanban();
+        }
 
         console.log("✦ Hệ thống Tâm Linh đã sẵn sàng!");
 
@@ -4017,6 +4345,25 @@
         }
       } catch (err) {
         console.error("❌ Lỗi tải Kanban từ DB:", err);
+      }
+    }
+
+    async function loadUserMissions() {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/user-missions/${userId}`);
+        const data = await res.json();
+
+        console.log("Dữ liệu Kanban nhận được:", data); // 👈 Thêm dòng này để debug
+
+        if (data.tasks && data.tasks.length > 0) {
+          userMissions = data.tasks;
+          renderKanban();
+        } else {
+          console.warn("API trả về mảng rỗng, kiểm tra lại bảng Missions trong DB");
+          document.getElementById('kanban-todo').innerHTML = '<p style="text-align:center; padding:10px; font-size:12px; color:#888;">Chưa có nhiệm vụ nào...</p>';
+        }
+      } catch (err) {
+        console.error("Lỗi load Kanban:", err);
       }
     }
 
@@ -4218,19 +4565,20 @@
       const targetPage = document.getElementById('page-' + name);
       if (name === 'caidat' || name === 'settings') {
         window.location.href = 'settings.html';
-        return; // Dừng hàm ngay lập tức
-      }
-      if (!targetPage) {
-        console.warn(`Không tìm thấy trang: page-${name}. Có thể bạn đang gọi nhầm ID hoặc chưa tách file.`);
         return;
       }
+      if (!targetPage) {
+        console.warn(`Không tìm thấy trang: page-${name}`);
+        return;
+      }
+
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       targetPage.classList.add('active');
+
       if (name === 'nhiemvu') renderKanban();
       if (name === 'danhhieu') renderTitles();
       if (name === 'quyengop') {
         renderDonors();
-        initQRs();
         setTimeout(syncGlobalTitleBadge, 50);
       }
     }

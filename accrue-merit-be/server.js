@@ -137,70 +137,86 @@ const Title = mongoose.model('Title', new mongoose.Schema({
     isLimited: { type: Boolean, default: false }, reqText: String
 }));
 
-// 1. API LẤY DANH SÁCH NHIỆM VỤ CỦA USER HÔM NAY
+// 1. API LẤY DANH SÁCH NHIỆM VỤ CỦA USER HÔM NAY (SAFE VERSION)
 app.get('/api/user-missions/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const today = new Date().toISOString().split('T')[0]; // VD: "2026-04-05"
+        const today = new Date().toISOString().split('T')[0];
 
-        // Câu Aggregation ta đã viết ở trên
-        // Trong server.js -> API /api/user-missions/:userId
-        const userKanban = await UserMission.aggregate([
-            { $match: { userId: new mongoose.Types.ObjectId(userId), date: today } },
-            { $unwind: "$kanban" },
-            {
-                $lookup: {
-                    from: "missions",
-                    localField: "kanban.missionId",
-                    foreignField: "id",
-                    as: "mission_detail"
-                }
-            },
-            { $unwind: "$mission_detail" },
-            {
-                $group: {
-                    _id: "$_id",
-                    date: { $first: "$date" },
-                    tasks: {
-                        $push: {
-                            id: "$kanban.missionId",
-                            status: "$kanban.status",
-                            name: "$mission_detail.name",
-                            desc: "$mission_detail.description",
-                            pts: "$mission_detail.pts",
-                            icon: "$mission_detail.icon",
-                            streakBonus: "$mission_detail.streakBonus"
-                        }
-                    }
-                }
+        // Tìm bảng nhiệm vụ hôm nay
+        let userMission = await UserMission.findOne({
+            userId: new mongoose.Types.ObjectId(userId),
+            date: today
+        });
+
+        // TỰ ĐỘNG SỬA LỖI: Nếu chưa có, HOẶC mảng rỗng
+        if (!userMission || !userMission.kanban || userMission.kanban.length === 0) {
+            const dailyMissions = await Mission.find({ isChain: false }).lean();
+
+            const kanbanTasks = dailyMissions.map(m => ({
+                missionId: String(m.id),
+                status: 'todo'
+            }));
+
+            if (!userMission) {
+                userMission = new UserMission({
+                    userId: userId,
+                    date: today,
+                    kanban: kanbanTasks
+                });
+            } else {
+                userMission.kanban = kanbanTasks;
             }
-        ]);
-
-        if (!userKanban || userKanban.length === 0) {
-            return res.json({ tasks: [] });
+            await userMission.save();
         }
-        res.json({ tasks: userKanban[0].tasks });
+
+        // Khớp data thủ công
+        const allMissions = await Mission.find({}).lean();
+        const missionDictionary = {};
+        allMissions.forEach(m => {
+            missionDictionary[m.id] = m;
+        });
+
+        // Gửi về web
+        const tasks = userMission.kanban.map(k => {
+            const detail = missionDictionary[k.missionId];
+            if (!detail) return null;
+
+            return {
+                id: k.missionId,
+                status: k.status,
+                name: detail.name,
+                desc: detail.desc,
+                pts: detail.pts,
+                icon: detail.icon,
+                streakBonus: detail.streakBonus
+            };
+        }).filter(t => t !== null);
+
+        res.json({ tasks: tasks });
     } catch (error) {
+        console.error("❌ Lỗi lấy Kanban:", error);
         res.status(500).json({ error: error.message });
     }
 });
 
-// 2. API CẬP NHẬT TRẠNG THÁI KHI KÉO THẢ KANBAN
+// 2. API CẬP NHẬT TRẠNG THÁI KHI KÉO THẢ KANBAN (ĐÃ KHÔI PHỤC LẠI)
 app.post('/api/user-missions/update-status', async (req, res) => {
     try {
         const { userId, missionId, status } = req.body;
         const today = new Date().toISOString().split('T')[0];
 
-        // Cập nhật lại status của 1 mission cụ thể trong mảng kanban
         await UserMission.updateOne(
-            { userId: userId, date: today, "kanban.missionId": missionId },
+            { userId: new mongoose.Types.ObjectId(userId), date: today, "kanban.missionId": missionId },
             { $set: { "kanban.$.status": status } }
         );
         res.json({ success: true });
     } catch (error) {
+        console.error("❌ Lỗi cập nhật kéo thả:", error);
         res.status(500).json({ error: error.message });
     }
 });
+
 // ══════════════ API BƠM DATA NHIỆM VỤ & DANH HIỆU ══════════════
 app.get('/seed-system', async (req, res) => {
     try {
