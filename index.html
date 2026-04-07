@@ -2639,6 +2639,351 @@
       letter-spacing: 0.5px;
       margin-top: 2px;
     }
+
+    /* ══ MARQUEE (VÒNG XOAY DONATE) ══ */
+    .qg-marquee-wrapper {
+      width: 100%;
+      overflow: hidden;
+      background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.15), transparent);
+      border-top: 1px solid rgba(201, 168, 76, 0.2);
+      border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+      padding: 12px 0;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+      white-space: nowrap;
+      display: flex;
+    }
+
+    .qg-marquee-content {
+      display: inline-block;
+      animation: marqueeScroll 25s linear infinite;
+    }
+
+    .qg-marquee-item {
+      display: inline-block;
+      margin-right: 50px;
+      font-size: 12px;
+      color: var(--parchment);
+    }
+
+    .qg-marquee-item span {
+      color: var(--jade-light);
+      font-weight: 700;
+      font-family: 'Cinzel', serif;
+    }
+
+    @keyframes marqueeScroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* ══ LAYOUT CHÍNH 2 CỘT (Thông tin - Hòm công đức) ══ */
+    .qg-split-layout {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .qg-left-col {
+      flex: 1.5;
+      /* Cột thông tin rộng hơn chút */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .qg-right-col-placeholder {
+      flex: 1;
+      /* Cột hòm công đức */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      .qg-split-layout {
+        flex-direction: column;
+      }
+    }
+
+    /* ══ HÒM CÔNG ĐỨC (DONATION BOX) ══ */
+    .merit-box-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 60%);
+      border-radius: 16px;
+      border: 1px dashed rgba(201, 168, 76, 0.2);
+      transition: all 0.3s ease;
+      min-height: 280px;
+    }
+
+    .merit-box-container:hover {
+      background: radial-gradient(circle, rgba(201, 168, 76, 0.15) 0%, transparent 70%);
+      border-color: var(--gold-dim);
+      transform: translateY(-5px);
+    }
+
+    .merit-box {
+      width: 15em;
+      height: 180px;
+      background: linear-gradient(180deg, #5A3215, #2A1204);
+      border: 3px solid var(--gold-dim);
+      border-radius: 8px 8px 4px 4px;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 15px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s;
+    }
+
+    .merit-box-container:hover .merit-box {
+      transform: scale(1.05);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 20px 40px rgba(201, 168, 76, 0.2);
+    }
+
+    .merit-box-slit {
+      width: 70px;
+      height: 6px;
+      background: #000;
+      border-radius: 3px;
+      margin-top: 15px;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
+
+    .merit-box-label {
+      margin-top: 2em;
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      color: var(--gold-light);
+      font-weight: bold;
+      letter-spacing: 6px;
+      text-shadow: 0 0 15px rgba(201, 168, 76, 0.6);
+    }
+
+    .merit-box-hint {
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--gold-light);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: pulseText 1.5s infinite alternate;
+    }
+
+    @keyframes pulseText {
+      0% {
+        opacity: 0.5;
+        text-shadow: 0 0 0 transparent;
+      }
+
+      100% {
+        opacity: 1;
+        text-shadow: 0 0 10px var(--gold);
+      }
+    }
+
+    /* Hiệu ứng đồng xu */
+    .merit-coin {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, #FFD700 0%, #B8860B 100%);
+      border-radius: 50%;
+      border: 1px solid #FFF8DC;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.5), 0 2px 5px rgba(201, 168, 76, 0.8);
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(-50px) scale(0);
+    }
+
+    @keyframes dropCoin {
+      0% {
+        transform: translateY(-50px) scale(1);
+        opacity: 1;
+      }
+
+      70% {
+        transform: translateY(10px) scale(0.8);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(20px) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    /* ══ POPUP CHỌN MỆNH GIÁ (DONATE MODAL) - PHÓNG TO ══ */
+    .donate-modal-box {
+      max-width: 800px !important;
+      /* Mở rộng chiều ngang đáng kể */
+      padding: 30px !important;
+      border-width: 2px !important;
+    }
+
+    .dm-layout {
+      display: flex;
+      gap: 30px;
+      /* Tăng khoảng cách */
+      margin-top: 25px;
+      align-items: center;
+    }
+
+    .dm-left {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      /* Tăng khoảng cách */
+      align-content: start;
+    }
+
+    .dm-right {
+      flex: 1.2;
+      /* Vùng QR rộng hơn */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px dashed var(--gold-dim);
+    }
+
+    @media (max-width: 768px) {
+      .dm-layout {
+        flex-direction: column-reverse;
+      }
+
+      /* Mobile thì nút chọn giá nằm dưới, QR nằm trên */
+      .donate-modal-box {
+        padding: 20px !important;
+      }
+    }
+
+    /* ══ MÃ QR PHÓNG TO ══ */
+    .qg-qr-img-box {
+      width: 250px;
+      /* Tăng kích thước đáng kể */
+      height: 250px;
+      /* Tăng kích thước đáng kể */
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .qg-qr-img-box img,
+    .qg-qr-img-box svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .qg-qr-info-bank {
+      font-size: 15px;
+      color: var(--gold-light);
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .qg-qr-info-acc {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      color: var(--jade-light);
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+
+    .qg-qr-info-name {
+      font-size: 13px;
+      color: rgba(240, 230, 200, 0.7);
+    }
+
+    /* ══ NÚT CHỌN MỆNH GIÁ LỚN HƠN ══ */
+    .qg-btn-amt {
+      background: rgba(13, 10, 4, 0.8);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      color: var(--parchment);
+      padding: 20px 15px;
+      /* Tăng kích thước */
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 17px;
+      /* Tăng font chữ */
+      font-weight: bold;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .qg-btn-amt.active,
+    .qg-btn-amt:hover {
+      background: rgba(201, 168, 76, 0.2);
+      border-color: var(--gold);
+      color: var(--gold-light);
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
+      transform: translateY(-3px);
+    }
+
+    /* ══ THÔNG TIN CÚNG DƯỜNG (BÊN TRÁI) - PHONG PHÚ HƠN ══ */
+    .qg-hero {
+      padding: 25px;
+      /* Tăng padding */
+    }
+
+    .qg-info-details {
+      margin-top: 25px;
+      text-align: left;
+      font-size: 12px;
+      color: rgba(240, 230, 200, 0.8);
+      line-height: 1.8;
+    }
+
+    .qg-info-details p {
+      margin-bottom: 12px;
+    }
+
+    .qg-info-purpose {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .purpose-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(201, 168, 76, 0.05);
+      border: 1px solid rgba(201, 168, 76, 0.15);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .purpose-icon {
+      font-size: 18px;
+      color: var(--gold);
+    }
+
+    .purpose-text {
+      font-size: 11px;
+    }
   </style>
 </head>
 
@@ -3263,25 +3608,20 @@
         <div class="logo-ring">☸</div>
         <div><span class="logo-name">Tích Đức</span><span class="logo-tagline">Nhật Ký Tâm Linh</span></div>
       </div>
-
       <div class="user-zone">
         <div class="badge" id="title-badge" onclick="goPage('danhhieu')">✦ Thiện Nhân Sơ Cấp</div>
-
         <div class="auth-links" id="guest-links">
           <span onclick="window.location.href='login.html'">Đăng nhập</span>
           <span class="auth-divider">/</span>
           <span onclick="window.location.href='register.html'">Đăng ký</span>
         </div>
-
         <div id="user-name-display"
           style="display: none; font-size: 11px; color: var(--gold-light); font-weight: 700; margin-right: 5px;"></div>
-
         <div class="avatar-wrapper">
           <div class="avatar" onclick="toggleUserMenu(event)">🧘</div>
           <div class="user-menu">
             <div class="um-item" onclick="goPage('caidat')"><span class="um-icon">⚙️</span> Cài đặt</div>
             <div class="um-item" onclick="goPage('quyengop')"><span class="um-icon">🏮</span> Quyên góp</div>
-
             <div class="um-divider" id="logout-divider"></div>
             <div class="um-item" id="logout-btn" style="color: #E8A090;" onclick="handleLogout()">
               <span class="um-icon">🚪</span> Đăng xuất
@@ -3290,6 +3630,7 @@
         </div>
       </div>
     </header>
+
     <div class="sub-content">
       <div class="page-title-block">
         <p class="page-badge">Bố Thí Công Đức</p>
@@ -3300,69 +3641,110 @@
           <div class="pdl r"></div>
         </div>
       </div>
-      <div class="qg-content">
-        <!-- Hero -->
-        <div class="qg-hero">
-          <div class="qg-hero-icon">🏮</div>
-          <div class="qg-hero-title">Cúng Dường Tam Bảo</div>
-          <div class="qg-hero-desc">"Bố thí là hạt giống công đức, gieo nhân lành gặt quả lành"<br>Mỗi đồng quyên góp là
-            một ngọn nến thắp sáng trí tuệ.</div>
-          <div class="qg-total-raised" id="qg-total">36.363.363 VND</div>
-          <div class="qg-total-label">Tổng tiền đã quyên góp</div>
-        </div>
 
-        <!-- QR Cards -->
-        <div class="qg-qr-section">
-          <div class="qg-qr-card active" id="qr-card-1" onclick="openQR('mb')">
-            <div class="qg-qr-label">MB Bank</div>
-            <div class="qg-qr-bank">Ngân hàng Quân Đội</div>
-            <div class="qg-qr-img-wrap" id="qr-small-mb"></div>
-          </div>
-          <div class="qg-qr-card" id="qr-card-2" onclick="openQR('vcb')">
-            <div class="qg-qr-label">Vietcombank</div>
-            <div class="qg-qr-bank">Ngân hàng Ngoại thương</div>
-            <div class="qg-qr-img-wrap" id="qr-small-vcb"></div>
-          </div>
-          <div class="qg-qr-card" id="qr-card-3" onclick="openQR('momo')">
-            <div class="qg-qr-label">MoMo</div>
-            <div class="qg-qr-bank">Ví điện tử MoMo</div>
-            <div class="qg-qr-img-wrap" id="qr-small-momo"></div>
-          </div>
+      <div class="qg-marquee-wrapper">
+        <div class="qg-marquee-content" id="donor-marquee">
+          <div class="qg-marquee-item">Đang tải danh sách nhà hảo tâm... ☸</div>
         </div>
+      </div>
 
-        <!-- Amount selector -->
-        <div class="qg-amount-row">
-          <div class="qg-amt-btn active" onclick="selectAmt(this,'10K')">10K</div>
-          <div class="qg-amt-btn" onclick="selectAmt(this,'50K')">50K</div>
-          <div class="qg-amt-btn" onclick="selectAmt(this,'100K')">100K</div>
-          <div class="qg-amt-btn" onclick="selectAmt(this,'200K')">200K</div>
-          <div class="qg-amt-btn" onclick="selectAmt(this,'500K')">500K</div>
+      <div class="qg-content" style="overflow: visible;">
+        <div class="qg-split-layout">
+
+          <div class="qg-left-col">
+            <div class="qg-hero" style="height: 100%;">
+              <div class="qg-hero-icon">🏮</div>
+              <div class="qg-hero-title">Cúng Dường Tam Bảo - Đạo Lý Thiện Tâm</div>
+              <div class="qg-hero-desc">"Bố thí là hạt giống công đức, gieo nhân lành gặt quả lành"</div>
+              <div class="qg-total-raised" id="qg-total">0 VND</div>
+              <div class="qg-total-label">Tổng tiền đạo tràng đã nhận</div>
+
+              <div class="qg-info-details">
+                <p><strong style="color: var(--gold-light);">Thí chủ thân mến,</strong></p>
+                <p>Quyên góp cúng dường là hành động thiện lành, thể hiện lòng từ bi và sự xả bỏ tham ái. Mỗi đồng cúng
+                  dường của quý vị không chỉ giúp đỡ đạo tràng hoạt động mà còn gieo hạt giống phúc đức cho chính bản
+                  thân
+                  và gia đình.</p>
+                <p>Nguồn cúng dường sẽ được sử dụng minh bạch và hiệu quả cho các mục đích Phật sự và thiện nguyện:</p>
+
+                <div class="qg-info-purpose">
+                  <div class="purpose-item">
+                    <div class="purpose-icon">🏯</div>
+                    <div class="purpose-text">Duy trì, tu sửa <br> cảnh quan Đạo tràng</div>
+                  </div>
+                  <div class="purpose-item">
+                    <div class="purpose-icon">🥗</div>
+                    <div class="purpose-text">Tổ chức các bữa <br> ăn chay miễn phí</div>
+                  </div>
+                  <div class="purpose-item">
+                    <div class="purpose-icon">🕊️</div>
+                    <div class="purpose-text">Thực hiện các khóa <br> phóng sinh, thiện nguyện</div>
+                  </div>
+                  <div class="purpose-item">
+                    <div class="purpose-icon">📚</div>
+                    <div class="purpose-text">In ấn, phổ biến <br> kinh sách Phật giáo</div>
+                  </div>
+                </div>
+
+                <p style="margin-top: 15px; text-align: left; font-size: 11px; color: var(--gold-dim);">
+                  * LƯU Ý: Không thay đổi nội dung chuyển khoản để hệ thống ghi nhận chính xác.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="qg-right-col-placeholder">
+            <div class="merit-box-container" onclick="openDonateModal()">
+              <div class="merit-box">
+                <div class="merit-box-slit"></div>
+                <div class="merit-box-label">TÙY TÂM</div>
+              </div>
+              <div class="merit-box-hint">👆 Chạm để phát tâm ✦</div>
+            </div>
+          </div>
+
         </div>
-
-        <!-- Donors -->
-        <div class="qg-donors-ttl">Nhà Hảo Tâm Gần Đây</div>
-        <div id="donors-list"></div>
       </div>
     </div>
     <nav class="app-footer">
       <div class="nav-item" onclick="goPage('home')"><span class="ni"></span>Nhà</div>
       <div class="nav-item" onclick="goPage('nhiemvu')"><span class="ni"></span>Nhiệm Vụ</div>
       <div class="nav-item" onclick="goPage('gomo')"><span class="ni"></span>Gõ Mõ</div>
-      <div class="nav-item active" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
+      <div class="nav-item" onclick="goPage('nhang')"><span class="ni"></span>Nhang</div>
       <div class="nav-item" onclick="goPage('danhhieu')"><span class="ni"></span>Danh Hiệu</div>
-      <div class="nav-item" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
+      <div class="nav-item active" onclick="goPage('quyengop')"><span class="ni"></span>Quyên Góp</div>
     </nav>
   </div>
 
-  <!-- QR MODAL -->
-  <div class="qr-modal" id="qr-modal" onclick="closeQRModal()">
-    <div class="qr-modal-box" onclick="event.stopPropagation()">
-      <div class="qr-modal-title" id="qr-modal-title">MB Bank</div>
-      <div class="qr-modal-bank" id="qr-modal-bank">Ngân hàng Quân Đội</div>
-      <div class="qr-modal-img" id="qr-modal-img"></div>
-      <div class="qr-modal-acct" id="qr-modal-acct">0123 4567 890</div>
-      <div class="qr-modal-name" id="qr-modal-name">NGUYEN VAN A</div>
-      <button class="qr-close-btn" onclick="closeQRModal()">Đóng 🙏</button>
+  <div class="modal-overlay" id="donate-modal-overlay" onclick="closeDonateModal()">
+    <div class="modal-box donate-modal-box" onclick="event.stopPropagation()">
+      <div class="qr-modal-title">Phát Tâm Cúng Dường</div>
+      <div class="qr-modal-bank">Vui lòng chọn mệnh giá và quét mã QR</div>
+
+      <div class="dm-layout">
+        <div class="dm-left">
+          <button class="qg-btn-amt active" onclick="selectDonation('10k', this)">10.000đ</button>
+          <button class="qg-btn-amt" onclick="selectDonation('20k', this)">20.000đ</button>
+          <button class="qg-btn-amt" onclick="selectDonation('50k', this)">50.000đ</button>
+          <button class="qg-btn-amt" onclick="selectDonation('100k', this)">100.000đ</button>
+          <button class="qg-btn-amt" onclick="selectDonation('200k', this)">200.000đ</button>
+          <button class="qg-btn-amt" onclick="selectDonation('500k', this)">500.000đ</button>
+        </div>
+
+        <div class="dm-right">
+          <div class="qg-qr-img-box" id="main-qr-img">
+          </div>
+          <div class="qg-qr-info-bank">MB Bank - 08222216167810</div>
+          <div class="qg-qr-info-name">NGUYEN VAN QUOC BAO</div>
+          <div style="font-size: 11px; margin-top: 10px; color: var(--gold-dim);">
+            Nội dung chuyển khoản: <br>
+            <strong id="qr-transfer-content" style="color: #fff; font-size: 14px; letter-spacing: 1.5px;">NAP
+              TUTHIEN</strong>
+          </div>
+        </div>
+      </div>
+
+      <button class="qr-close-btn" style="margin-top: 25px;" onclick="closeDonateModal()">Đóng 🙏</button>
     </div>
   </div>
 
@@ -3459,63 +3841,56 @@
       if (moCountEl) moCountEl.textContent = moCount;
     });
 
-    // ══════════════ QR GENERATOR ══════════════
-    // Minimal QR-like SVG generator (visual only, not scannable — replace with real QR images)
-    function makeQRSvg(seed, size = 88) {
-      const s = size, c = Math.floor(s / 9);
-      let cells = [];
-      // finder pattern top-left
-      const fp = (ox, oy, svg) => {
-        svg.push(`<rect x="${ox * c}" y="${oy * c}" width="${7 * c}" height="${7 * c}" fill="#000"/>`);
-        svg.push(`<rect x="${(ox + 1) * c}" y="${(oy + 1) * c}" width="${5 * c}" height="${5 * c}" fill="#fff"/>`);
-        svg.push(`<rect x="${(ox + 2) * c}" y="${(oy + 2) * c}" width="${3 * c}" height="${3 * c}" fill="#000"/>`);
-      };
-      let parts = [`<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg"><rect width="${s}" height="${s}" fill="#fff"/>`];
-      fp(0, 0, parts); fp(0, 2, parts); fp(2, 0, parts);
-      // data cells (pseudo-random from seed)
-      let r = seed * 6364136223846793005n + 1442695040888963407n;
-      for (let i = 1; i < 8; i++) for (let j = 1; j < 8; j++) {
-        r = (r * 6364136223846793005n + 1442695040888963407n) & 0xFFFFFFFFFFFFFFFFn;
-        if (Number(r & 1n) && i > 1 && j > 1 && !(i < 3 && j < 3)) parts.push(`<rect x="${i * c}" y="${j * c}" width="${c - .5}" height="${c - .5}" fill="#000"/>`);
-      }
-      // Border timing pattern
-      for (let i = 2; i < 9; i += 2) parts.push(`<rect x="${i * c}" y="0" width="${c}" height="${c}" fill="#000"/>`);
-      parts.push('</svg>');
-      return parts.join('');
-    }
-
-    const QR_DATA = {
-      mb: { title: 'MB Bank', bank: 'Ngân hàng Quân Đội MB', acct: '0981 2345 678', name: 'QUY TU TAM LONG', seed: 123456789n },
-      vcb: { title: 'Vietcombank', bank: 'Ngân hàng Ngoại Thương VCB', acct: '1012 3456 789 01', name: 'QUY TU TAM LONG', seed: 987654321n },
-      momo: { title: 'MoMo', bank: 'Ví điện tử MoMo', acct: '0981 234 567', name: 'QUY TU TAM LONG', seed: 192837465n },
+    const MY_QR_IMAGES = {
+      '10k': 'img/QR_Code10k.png',
+      '20k': 'img/QR_Code20k.png',
+      '50k': 'img/QR_Code50k.png',
+      '100k': 'img/QR_Code100k.png',
+      '200k': 'img/QR_Code200k.png',
+      '500k': 'img/QR_Code500k.png'
     };
 
-    function initQRs() {
-      Object.entries(QR_DATA).forEach(([k, d]) => {
-        const small = document.getElementById('qr-small-' + k);
-        if (small) small.innerHTML = makeQRSvg(d.seed, 88);
-      });
+    function openDonateModal() {
+      document.getElementById('donate-modal-overlay').classList.add('open');
+      const firstBtn = document.querySelector('.dm-left .qg-btn-amt');
+      if (firstBtn) selectDonation('10k', firstBtn);
     }
 
-    let currentQR = 'mb';
-    // Tìm hàm openQR(key) và thêm nội dung chuyển khoản theo tên User
-    function openQR(key) {
-      currentQR = key;
-      const d = QR_DATA[key];
+    function closeDonateModal() {
+      document.getElementById('donate-modal-overlay').classList.remove('open');
+    }
+
+    function selectDonation(amountKey, btnElement) {
+      document.querySelectorAll('.dm-left .qg-btn-amt').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-      const transferContent = currentUser ? `NAP ${currentUser.username}` : "NAP TUTHIEN";
+      const transferContent = currentUser ? `NAP ${currentUser.username.toUpperCase()}` : "NAP TUTHIEN";
+      document.getElementById('qr-transfer-content').textContent = transferContent;
 
-      document.getElementById('qr-modal-title').textContent = d.title;
-      document.getElementById('qr-modal-bank').textContent = d.bank;
-      document.getElementById('qr-modal-img').innerHTML = makeQRSvg(d.seed, 200);
-      document.getElementById('qr-modal-acct').textContent = d.acct;
-      document.getElementById('qr-modal-name').textContent = d.name;
+      const qrBox = document.getElementById('main-qr-img');
 
-      document.getElementById('qr-modal').classList.add('open');
+      qrBox.innerHTML = `<img src="${MY_QR_IMAGES[amountKey]}" alt="QR ${amountKey}" style="width:100%; border-radius:4px;">`;
+
+      const seedMap = { '10k': 1n, '20k': 2n, '50k': 5n, '100k': 10n, '200k': 20n, '500k': 50n };
+      qrBox.innerHTML = makeQRSvg(seedMap[amountKey], 130);
     }
 
-    function closeQRModal() {
-      document.getElementById('qr-modal').classList.remove('open');
+    function openDonateModal() {
+      const box = document.querySelector('.merit-box');
+      if (box) {
+        const coin = document.createElement('div');
+        coin.className = 'merit-coin';
+        coin.style.animation = 'dropCoin 0.6s ease-in forwards';
+        box.appendChild(coin);
+        setTimeout(() => coin.remove(), 600);
+      }
+
+      setTimeout(() => {
+        document.getElementById('donate-modal-overlay').classList.add('open');
+        const firstBtn = document.querySelector('.dm-left .qg-btn-amt');
+        if (firstBtn) selectDonation('10k', firstBtn);
+      }, 300);
     }
 
     function selectAmt(el, amt) {
@@ -3547,16 +3922,15 @@
       }
     }
 
-    // ══════════════ DONORS ══════════════
+    // ══════════════ DONORS LÊN VÒNG XOAY (MARQUEE) ══════════════
     async function renderDonors() {
-      const container = document.getElementById('donors-list');
+      const marquee = document.getElementById('donor-marquee');
       const totalEl = document.getElementById('qg-total');
 
-      if (!container) return;
-      container.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--gold-dim);">Đang kết nối đạo tràng... ☸</div>';
+      if (!marquee) return;
 
       try {
-        const res = await fetch('https://accrue-merit.onrender.com/api/donations');
+        const res = await fetch(`${API_BASE_URL}/api/donations`);
         const data = await res.json();
 
         if (totalEl && data.totalAmount !== undefined) {
@@ -3564,43 +3938,23 @@
         }
 
         const list = data.donations || [];
-        container.innerHTML = '';
 
         if (list.length === 0) {
-          container.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--gold-dim);">Chưa có dữ liệu cúng dường.</div>';
+          marquee.innerHTML = '<div class="qg-marquee-item">Chưa có dữ liệu quyên góp. ☸</div>';
           return;
         }
 
+        let htmlContent = '';
         list.forEach(d => {
-          const el = document.createElement('div');
-          el.className = 'donor-item';
-
-          const avatars = ['🧘', '🙏', '💐', '☯️', '🌸'];
-          const av = d.avatar || avatars[Math.floor(Math.random() * avatars.length)];
-
           const amtStr = (d.amount || 0).toLocaleString('vi-VN') + 'đ';
-
-          el.innerHTML = `
-        <div class="donor-avatar">${av}</div>
-        <div class="donor-info">
-          <div class="donor-name">${d.donorName || 'Thí chủ ẩn danh'}</div>
-          ${d.message ? `<div class="donor-msg">"${d.message}"</div>` : ''}
-        </div>
-        <div style="text-align:right; flex-shrink:0">
-          <div class="donor-amt">${amtStr}</div>
-          <div class="donor-time">Vừa xong</div>
-        </div>
-      `;
-          container.appendChild(el);
+          htmlContent += `<div class="qg-marquee-item">🙏 Thí chủ <b>${d.donorName || 'Ẩn danh'}</b> đã phát tâm <span>${amtStr}</span></div>`;
         });
 
-        if (typeof DONORS !== 'undefined') {
-          DONORS = list;
-        }
+        marquee.innerHTML = htmlContent + htmlContent;
 
       } catch (err) {
         console.error("❌ Lỗi thỉnh kinh quyên góp:", err);
-        container.innerHTML = '<div style="text-align:center; padding: 20px; font-size: 11px; color: #E8A090;">❌ Không thể kết nối tới đạo tràng</div>';
+        marquee.innerHTML = '<div class="qg-marquee-item" style="color: #E8A090;">❌ Mất kết nối đạo tràng. Không thể tải danh sách.</div>';
       }
     }
 
