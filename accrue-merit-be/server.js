@@ -11,7 +11,11 @@ const UserMission = require('./models/UserMission');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // ══════════════ KẾT NỐI MONGODB ══════════════
 const MONGO_URI = process.env.MONGO_URI;
@@ -29,7 +33,7 @@ app.get('/init-db', async (req, res) => {
                 username: '161seconds',
                 password: '123',
                 name: 'Bảo Demo',
-                stats: { ducTotal: 3667, toiTotal: 25, moCount: 150, streak: 7 }
+                stats: { ducTotal: 3667, toiTotal: 0, moCount: 150, streak: 7 }
             });
             await user.save();
         }
@@ -203,7 +207,7 @@ app.get('/api/user-missions/:userId', async (req, res) => {
     }
 });
 
-// 2. API CẬP NHẬT TRẠNG THÁI KHI KÉO THẢ KANBAN (ĐÃ KHÔI PHỤC LẠI)
+// 2. API CẬP NHẬT TRẠNG THÁI KHI KÉO THẢ KANBAN
 app.post('/api/user-missions/update-status', async (req, res) => {
     try {
         const { userId, missionId, status } = req.body;
