@@ -333,7 +333,6 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // ══════════════ API NHẬN THÔNG BÁO TỪ SEPAY (IPN) ══════════════
-const Donation = require('./models/Donation');
 app.post('/api/sepay-webhook', async (req, res) => {
     try {
         const data = req.body;
