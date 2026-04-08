@@ -355,6 +355,7 @@ app.post('/api/sepay-webhook', async (req, res) => {
 
         let donorName = "Nhà hảo tâm ẩn danh";
         let foundUsername = null;
+        let isUserFoundInDB = false;
 
         const match = content.match(/NAP[\s\-_]+([A-Z0-9]+)/);
         if (match) {
@@ -365,6 +366,7 @@ app.post('/api/sepay-webhook', async (req, res) => {
             const user = await User.findOne({ username: foundUsername });
             if (user) {
                 donorName = user.name;
+                isUserFoundInDB = true;
                 const karmaGained = Math.floor(amount / 10);
 
                 await User.findOneAndUpdate(
@@ -372,6 +374,18 @@ app.post('/api/sepay-webhook', async (req, res) => {
                     { $inc: { "stats.ducTotal": karmaGained } }
                 );
                 console.log(`✅ Đã cộng ${karmaGained} điểm cho ${foundUsername}`);
+            }
+        }
+
+        if (!isUserFoundInDB) {
+            let cleanName = content
+                .replace(/CHUYEN TIEN|CHUYENTIEN|NAP TIEN|IBFT|REMIT|THANH TOAN|MBVCB|MOMO|ZALOPAY/g, "")
+                .replace(/[0-9\-_.@]/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+
+            if (cleanName.length > 2) {
+                donorName = cleanName;
             }
         }
 
@@ -383,7 +397,7 @@ app.post('/api/sepay-webhook', async (req, res) => {
                 createdAt: new Date()
             });
             await newDonation.save();
-            console.log(`✅ Đã lưu giao dịch ${amount}đ vào Database`);
+            console.log(`✅ Đã lưu giao dịch ${amount}đ của [${donorName}] vào DB`);
         }
 
         res.status(200).json({ success: true, message: "Đã xử lý IPN" });
