@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
   <meta charset="UTF-8" />
@@ -434,10 +434,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       createParticles();
       let users = JSON.parse(localStorage.getItem('users')) || [];
-      if (!users.find(u => u.username === '161seconds')) {
-        users.push({ username: '161seconds', password: '123', name: 'Bao (Demo)' });
-        localStorage.setItem('users', JSON.stringify(users));
-      }
     });
 
     // An hien mat khau
@@ -461,6 +457,15 @@
       e.preventDefault(); // Chan reload trang
       const userVal = document.getElementById('username').value.trim();
       const passVal = document.getElementById('password').value.trim();
+
+      if (userVal.length < 3 || userVal.length > 30) {
+        openDialog('Lỗi', 'Tên tài khoản phải từ 3-30 ký tự', 'danger', null);
+        return;
+      }
+      if (/[<>"'&]/.test(userVal)) {
+        openDialog('Lỗi', 'Tên tài khoản chứa ký tự không hợp lệ', 'danger', null);
+        return;
+      }
       handleLogin(userVal, passVal);
     });
 
@@ -483,11 +488,7 @@
         const user = data.user;
         const stats = user.stats || {};
 
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        localStorage.setItem('ducTotal', stats.ducTotal || 0);
-        localStorage.setItem('toiTotal', stats.toiTotal || 0);
-        localStorage.setItem('moCount', stats.moCount || 0);
-        localStorage.setItem('streak', stats.streak || 0);
+        localStorage.setItem('displayName', user.name || '');
 
         // Báo thành công và chuyển trang sau khi bấm Đồng ý
         openDialog('Thành Công', 'Đăng nhập thành công ✦', 'confirm', () => {
@@ -500,23 +501,6 @@
       }
     }
 
-    function showModal(icon, title, desc, pts = "") {
-      document.getElementById('modal-icon').textContent = icon;
-      document.getElementById('modal-title').textContent = title;
-      document.getElementById('modal-desc').textContent = desc;
-      const ptsEl = document.getElementById('modal-pts');
-      if (pts) {
-        ptsEl.style.display = 'block';
-        ptsEl.textContent = pts;
-      } else {
-        ptsEl.style.display = 'none';
-      }
-      document.getElementById('modal-overlay').classList.add('open');
-    }
-
-    function closeModal() {
-      document.getElementById('modal-overlay').classList.remove('open');
-    }
   </script>
 </body>
 

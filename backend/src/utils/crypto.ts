@@ -1,13 +1,9 @@
-//hàm mã hóa nội dung bất kỳ thành SHA256
+import crypto from 'crypto'
 
-import { createHash } from 'crypto'
-import dotenv from 'dotenv'
-dotenv.config()
-function SHA256(content: string) {
-  return createHash('SHA256').update(content).digest('hex') //16
+export function sha256(content: string) {
+  return crypto.createHash('sha256').update(content).digest('hex')
 }
 
-// hàm mã hóa mật khẩu theo tiêu chuẩn SHA256
 export function hashPassword(password: string) {
-  return SHA256(password + process.env.PASSWORD_SECRET)
+  return sha256(password + (process.env.PASSWORD_SECRET || 'accrue-merit-secret'))
 }

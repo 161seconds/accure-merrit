@@ -1,28 +1,34 @@
 export enum UserVerifyStatus {
-  Unverified, // chưa xác thực email, mặc định = 0
-  Verified, // đã xác thực email
-  Banned // bị khóa
-}
-export enum USER_ROLE {
-  Admin, //0
-  Staff, //1
-  User //2
+  Unverified,
+  Verified,
+  Banned
 }
 
 export enum TokenType {
-  AccessToken, //0
-  RefreshToken, //1
-  ForgotPasswordToken, //2
-  EmailVerificationToken //3
+  AccessToken,
+  RefreshToken,
+  ForgotPasswordToken,
+  EmailVerifyToken
 }
 
-export enum MeritType {
-  GOOD = 'GOOD',
-  BAD = 'BAD'
+export enum KarmaLogType {
+  Duc = 'duc',
+  Toi = 'toi'
 }
 
-export enum MeritLevel {
-  EASY = 5,
-  MEDIUM = 10,
-  HARD = 15
+export enum WishCategory {
+  SucKhoe = 'suc-khoe',
+  GiaDao = 'gia-dao',
+  HocTap = 'hoc-tap',
+  SuNghiep = 'su-nghiep',
+  TinhDuyen = 'tinh-duyen',
+  BinhAn = 'binh-an',
+  Khac = 'khac'
+}
+
+export enum IncenseType {
+  TramHuong = 'tram-huong',
+  Que = 'que',
+  Nhai = 'nhai',
+  BachDan = 'bach-dan'
 }

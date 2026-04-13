@@ -1,22 +1,24 @@
 import { JwtPayload } from 'jsonwebtoken'
 import { TokenType } from '~/constants/enums'
-import { ParsedQs } from 'qs'
 
-//định nghĩa những gì người dùng sẽ gửi lên
 export interface RegisterReqBody {
+  username: string
   email: string
-  name: string
   password: string
   confirm_password: string
-  date_of_birth: string
+  name: string
 }
 
 export interface LoginReqBody {
-  email: string
+  username: string
   password: string
 }
 
 export interface LogoutReqBody {
+  refresh_token: string
+}
+
+export interface RefreshTokenReqBody {
   refresh_token: string
 }
 
@@ -25,33 +27,10 @@ export interface TokenPayload extends JwtPayload {
   token_type: TokenType
 }
 
-export interface EmailVerifyReqQuery extends ParsedQs {
-  email_verify_token: string
-}
-
-export interface ForgotPasswordReqBody {
-  email: string
-}
-
-export interface VerifyForgotPasswordTokenReqBdy {
-  forgot_password_token: string
-}
-
-export interface ResetPasswordReqBody {
-  password: string
-  confirm_password: string
-  forgot_password_token: string
-}
-
-export interface updateMeReqBody {
+export interface UpdateProfileReqBody {
   name?: string
+  avatar?: string
   date_of_birth?: string
-  bio?: string // optional
-  location?: string // optional
-  website?: string // optional
-  username?: string // optional
-  avatar?: string // optional
-  cover_photo?: string // optional
 }
 
 export interface ChangePasswordReqBody {
@@ -60,6 +39,8 @@ export interface ChangePasswordReqBody {
   confirm_password: string
 }
 
-export interface RefreshTokenReqBody {
-  refresh_token: string
+export interface UpdateSettingsReqBody {
+  font?: string
+  theme?: string
+  language?: string
 }

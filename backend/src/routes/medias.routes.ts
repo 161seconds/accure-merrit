@@ -1,23 +1,14 @@
-import express from 'express'
-import { uploadSingleImageController, uploadSingleVideoController } from '~/controllers/medias.controllers'
-import { wrapAsync } from '~/utils/handler'
+import { Router } from 'express'
+import { uploadImageController } from '~/controllers/medias.controllers'
+import { accessTokenValidator } from '~/middlewares/users.middlewares'
+import { wrapRequestHandler } from '~/utils/handler'
 
-const mediasRouter = express.Router()
+const mediasRouter = Router()
 
 /**
-update-image (single)
-path: /medias/update-image
-method: post
+ * @route   POST /api/medias/upload-image
+ * @desc    Upload ảnh (avatar, v.v.)
  */
-
-mediasRouter.post(
-  '/upload-image', //
-  wrapAsync(uploadSingleImageController)
-)
-
-mediasRouter.post(
-  '/upload-video', //
-  wrapAsync(uploadSingleVideoController)
-)
+mediasRouter.post('/upload-image', accessTokenValidator, wrapRequestHandler(uploadImageController))
 
 export default mediasRouter

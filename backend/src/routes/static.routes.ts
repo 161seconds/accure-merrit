@@ -1,17 +1,9 @@
+import { Router } from 'express'
 import express from 'express'
-import { serveImageController, serveVideoController } from '~/controllers/medias.controllers'
-import { wrapAsync } from '~/utils/handler'
-//
-const staticRouter = express.Router()
+import { UPLOAD_DIR } from '~/constants/dir'
 
-// routes chia sẽ ảnh
-staticRouter.get(
-  '/image/:filename', //
-  wrapAsync(serveImageController)
-)
-//
-staticRouter.get(
-  '/video/:filename', //
-  wrapAsync(serveVideoController)
-)
+const staticRouter = Router()
+
+staticRouter.use('/', express.static(UPLOAD_DIR))
+
 export default staticRouter

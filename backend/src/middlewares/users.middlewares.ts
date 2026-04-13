@@ -1,419 +1,202 @@
-import { NextFunction, Request, Response } from 'express'
-import { check, checkSchema, param, ParamSchema } from 'express-validator'
-import { JsonWebTokenError } from 'jsonwebtoken'
-import { capitalize } from 'lodash'
-import HTTP_STATUS from '~/constants/httpStatus'
-import { USERS_MESSAGES } from '~/constants/message'
+import { Request, Response, NextFunction } from 'express'
+import { checkSchema, validationResult } from 'express-validator'
+import jwt from 'jsonwebtoken'
 import { ErrorWithStatus } from '~/models/Errors'
-import { verifyToken } from '~/utils/jwt'
-import { validate } from '~/utils/validation'
+import { TokenPayload } from '~/models/request/user.requests'
+import usersService from '~/services/users.services'
+import { USERS_MESSAGES } from '~/constants/message'
+import HTTP_STATUS from '~/constants/httpStatus'
+import {
+  RegisterReqBody,
+  LoginReqBody,
+  LogoutReqBody,
+  RefreshTokenReqBody,
+  UpdateProfileReqBody,
+  ChangePasswordReqBody,
+  UpdateSettingsReqBody
+} from '~/models/request/user.requests'
 
-const passwordSchema: ParamSchema = {
-  notEmpty: {
-    errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
-  },
-  isString: {
-    errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_A_STRING
-  },
-  isLength: {
-    options: {
-      min: 8,
-      max: 50
-    },
-    errorMessage: USERS_MESSAGES.PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50
-  },
-  isStrongPassword: {
-    options: {
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1
-      // returnScore: false
-      // false : chỉ return true nếu password mạnh, false nếu k
-      // true : return về chất lượng password(trên thang điểm 10)
-    },
-    errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_STRONG
+export const registerController = async (req: Request<any, any, RegisterReqBody>, res: Response) => {
+  const result = await usersService.register(req.body)
+  return res.status(HTTP_STATUS.CREATED).json({
+    message: USERS_MESSAGES.REGISTER_SUCCESS,
+    result
+  })
+}
+
+export const loginController = async (req: Request<any, any, LoginReqBody>, res: Response) => {
+  const { user_id } = req.body as any
+  const result = await usersService.login(user_id)
+  return res.json({
+    message: USERS_MESSAGES.LOGIN_SUCCESS,
+    result
+  })
+}
+
+export const logoutController = async (req: Request<any, any, LogoutReqBody>, res: Response) => {
+  const { refresh_token } = req.body
+  await usersService.logout(refresh_token)
+  return res.json({ message: USERS_MESSAGES.LOGOUT_SUCCESS })
+}
+
+export const refreshTokenController = async (req: Request<any, any, RefreshTokenReqBody>, res: Response) => {
+  const { user_id } = req.decoded_refresh_token!
+  const { refresh_token } = req.body
+  const result = await usersService.refreshToken(user_id, refresh_token)
+  return res.json({
+    message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+    result
+  })
+}
+
+export const getProfileController = async (req: Request, res: Response) => {
+  const { user_id } = req.decoded_authorization!
+  const result = await usersService.getProfile(user_id)
+  return res.json({
+    message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
+    result
+  })
+}
+
+export const updateProfileController = async (req: Request<any, any, UpdateProfileReqBody>, res: Response) => {
+  const { user_id } = req.decoded_authorization!
+  const result = await usersService.updateProfile(user_id, req.body)
+  return res.json({
+    message: USERS_MESSAGES.UPDATE_PROFILE_SUCCESS,
+    result
+  })
+}
+
+export const changePasswordController = async (req: Request<any, any, ChangePasswordReqBody>, res: Response) => {
+  const { user_id } = req.decoded_authorization!
+  await usersService.changePassword(user_id, req.body.old_password, req.body.password)
+  return res.json({ message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS })
+}
+
+export const updateSettingsController = async (req: Request<any, any, UpdateSettingsReqBody>, res: Response) => {
+  const { user_id } = req.decoded_authorization!
+  const result = await usersService.updateSettings(user_id, req.body)
+  return res.json({
+    message: USERS_MESSAGES.UPDATE_SETTINGS_SUCCESS,
+    result
+  })
+}
+
+export const getStatsController = async (req: Request, res: Response) => {
+  const { user_id } = req.decoded_authorization!
+  const result = await usersService.getStats(user_id)
+  return res.json({
+    message: USERS_MESSAGES.GET_STATS_SUCCESS,
+    result
+  })
+}
+
+export const deleteAccountController = async (req: Request, res: Response) => {
+  const { user_id } = req.decoded_authorization!
+  const { password } = req.body
+  await usersService.deleteAccount(user_id, password)
+  return res.json({ message: USERS_MESSAGES.DELETE_ACCOUNT_SUCCESS })
+}
+
+export const accessTokenValidator = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw new ErrorWithStatus({
+      message: 'Access token không được gửi kèm',
+      status: HTTP_STATUS.UNAUTHORIZED
+    })
+  }
+
+  const token = authHeader.split(' ')[1]
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as TokenPayload
+
+    req.decoded_authorization = decoded
+
+    next()
+  } catch (error) {
+    throw new ErrorWithStatus({
+      message: 'Access token không hợp lệ hoặc đã hết hạn',
+      status: HTTP_STATUS.UNAUTHORIZED
+    })
   }
 }
-const confirmPasswordScheme: ParamSchema = {
-  notEmpty: {
-    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED
+
+export const validate = (validation: any) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    await validation.run(req)
+    const errors = validationResult(req)
+    if (errors.isEmpty()) {
+      return next()
+    }
+    const errorObject = errors.mapped()
+    const firstErrorMessage = Object.values(errorObject)[0].msg
+    next(new ErrorWithStatus({ message: firstErrorMessage, status: HTTP_STATUS.UNPROCESSABLE_ENTITY }))
+  }
+}
+
+export const refreshTokenValidator = (req: Request, res: Response, next: NextFunction) => {
+  const { refresh_token } = req.body
+  if (!refresh_token) {
+    throw new ErrorWithStatus({ message: 'Refresh token không được gửi kèm', status: HTTP_STATUS.UNAUTHORIZED })
+  }
+
+  try {
+    const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET as string) as TokenPayload
+    req.decoded_refresh_token = decoded
+    next()
+  } catch (error) {
+    throw new ErrorWithStatus({ message: 'Refresh token không hợp lệ hoặc đã hết hạn', status: HTTP_STATUS.UNAUTHORIZED })
+  }
+}
+
+export const loginValidator = validate(checkSchema({
+  username: {
+    notEmpty: { errorMessage: 'Username không được để trống' },
+    isString: { errorMessage: 'Username phải là chuỗi' },
+    trim: true
   },
-  isString: {
-    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_A_STRING
+  password: {
+    notEmpty: { errorMessage: 'Password không được để trống' },
+    isString: { errorMessage: 'Password phải là chuỗi' }
+  }
+}, ['body']))
+
+export const registerValidator = validate(checkSchema({
+  name: {
+    notEmpty: { errorMessage: 'Tên không được để trống' },
+    isString: { errorMessage: 'Tên phải là chuỗi' },
+    isLength: { options: { min: 1, max: 50 }, errorMessage: 'Tên phải từ 1 đến 50 ký tự' },
+    trim: true
   },
-  isLength: {
-    options: {
-      min: 8,
-      max: 50
-    },
-    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50
+  username: {
+    notEmpty: { errorMessage: 'Username không được để trống' },
+    isString: { errorMessage: 'Username phải là chuỗi' },
+    isLength: { options: { min: 3, max: 30 }, errorMessage: 'Username phải từ 3 đến 30 ký tự' },
+    matches: { options: /^[a-zA-Z0-9_]+$/, errorMessage: 'Username chỉ được chứa chữ, số và dấu gạch dưới' },
+    trim: true
   },
-  isStrongPassword: {
-    options: {
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1
-    },
-    errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRONG
+  email: {
+    notEmpty: { errorMessage: 'Email không được để trống' },
+    isEmail: { errorMessage: 'Email không đúng định dạng' },
+    trim: true
   },
-  custom: {
-    options: (value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error(USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD)
+  password: {
+    notEmpty: { errorMessage: 'Password không được để trống' },
+    isString: { errorMessage: 'Password phải là chuỗi' },
+    isLength: { options: { min: 6, max: 50 }, errorMessage: 'Password phải dài từ 6 đến 50 ký tự' }
+  },
+  confirm_password: {
+    notEmpty: { errorMessage: 'Xác nhận mật khẩu không được để trống' },
+    isString: { errorMessage: 'Xác nhận mật khẩu phải là chuỗi' },
+    custom: {
+      options: (value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error('Xác nhận mật khẩu không khớp')
+        }
+        return true
       }
-      return true
     }
   }
-}
-const nameSchema: ParamSchema = {
-  notEmpty: {
-    errorMessage: USERS_MESSAGES.NAME_IS_REQUIRED
-  },
-  isString: {
-    errorMessage: USERS_MESSAGES.NAME_MUST_BE_A_STRING
-  },
-  trim: true,
-  isLength: {
-    options: {
-      min: 1,
-      max: 100
-    },
-    errorMessage: USERS_MESSAGES.NAME_LENGTH_MUST_BE_FROM_1_TO_100
-  }
-}
-const dateOfBirth: ParamSchema = {
-  isISO8601: {
-    options: {
-      strict: true,
-      strictSeparator: true
-    },
-    errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_BE_ISO8601
-  }
-}
-const imageSchema: ParamSchema = {
-  optional: true,
-  isString: {
-    errorMessage: USERS_MESSAGES.IMAGE_URL_MUST_BE_A_STRING //
-  },
-  trim: true, //nên đặt trim dưới này thay vì ở đầu
-  isLength: {
-    options: {
-      min: 1,
-      max: 400
-    },
-    errorMessage: USERS_MESSAGES.IMAGE_URL_LENGTH_MUST_BE_LESS_THAN_400 //
-  }
-}
-//
-
-export const loginValidator = validate(
-  checkSchema(
-    {
-      email: {
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
-        },
-        isEmail: {
-          errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
-        },
-        trim: true
-      },
-      password: passwordSchema
-    },
-    ['body']
-  )
-)
-
-export const registerValidator = validate(
-  checkSchema(
-    {
-      name: nameSchema,
-      email: {
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
-        },
-        isEmail: {
-          errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
-        },
-        trim: true
-      },
-      password: passwordSchema,
-      confirm_password: confirmPasswordScheme,
-      date_of_birth: dateOfBirth
-    },
-    ['body']
-  )
-)
-
-export const accessTokenValidator = validate(
-  //
-  checkSchema(
-    {
-      Authorization: {
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED
-        },
-        custom: {
-          options: async (value, { req }) => {
-            // value: là đại diện cho trường dữ liệu gần nhất của nó là Authorization: 'Bearer access_token'
-            const access_token = value.split(' ')[1]
-            if (!access_token) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED, //401
-                message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED
-              })
-            }
-            //nếu có access_token
-            try {
-              const decoded_authorization = await verifyToken({
-                //
-                token: access_token,
-                privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
-              })
-              ;(req as Request).decoded_authorization = decoded_authorization
-            } catch (error) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED,
-                message: capitalize((error as JsonWebTokenError).message)
-              })
-            }
-            return true //passed validation
-          }
-        }
-      }
-    },
-    ['headers']
-  )
-)
-
-export const refreshTokenValidator = validate(
-  //
-  checkSchema(
-    {
-      refresh_token: {
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED
-        },
-        custom: {
-          options: async (value, { req }) => {
-            // value: refresh_token
-            if (!value) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED, //401
-                message: USERS_MESSAGES.REFRESH_TOKEN_IS_INVALID
-              })
-            }
-            //nếu có refresh_token thì
-            try {
-              const decoded_refresh_token = await verifyToken({
-                //
-                token: value,
-                privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
-              })
-
-              ;(req as Request).decoded_refresh_token = decoded_refresh_token
-            } catch (error) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED,
-                message: capitalize((error as JsonWebTokenError).message)
-              })
-            }
-            return true //passed validation
-          }
-        }
-      }
-    },
-    ['body']
-  )
-)
-
-export const emailVerifyTokenValidator = validate(
-  //
-  checkSchema(
-    {
-      email_verify_token: {
-        trim: true,
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED
-        },
-        // hàm kiểm tra verify
-        custom: {
-          options: async (value, { req }) => {
-            //value là email_verify_token
-            try {
-              const decoded_email_verify_token = await verifyToken({
-                token: value,
-                privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
-              })
-              ;(req as Request).decoded_email_verify_token = decoded_email_verify_token
-            } catch (error) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED, //401
-                message: capitalize((error as JsonWebTokenError).message)
-              })
-            }
-            //
-            return true
-          }
-        }
-      }
-    },
-    ['query']
-  )
-)
-
-export const forgotPasswordValidator = validate(
-  checkSchema(
-    {
-      email: {
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.EMAIL_IS_REQUIRED
-        },
-        isEmail: {
-          errorMessage: USERS_MESSAGES.EMAIL_IS_INVALID
-        },
-        trim: true
-      }
-    },
-    ['body']
-  )
-)
-
-export const forgotPasswordTokenValidator = validate(
-  checkSchema(
-    {
-      forgot_password_token: {
-        trim: true,
-        notEmpty: {
-          errorMessage: USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED
-        },
-        // verify token đó
-        custom: {
-          options: async (value, { req }) => {
-            // vậy trong này value là forgot_password_token
-            try {
-              const decoded_forgot_password_token = await verifyToken({
-                token: value,
-                privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
-              })
-              ;(req as Request).decoded_forgot_password_token = decoded_forgot_password_token
-            } catch (error) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS.UNAUTHORIZED, //401
-                message: capitalize((error as JsonWebTokenError).message)
-              })
-            }
-            //
-            return true //passed validation
-          }
-        }
-      }
-    },
-    ['body']
-  )
-)
-
-export const resetPasswordValidator = validate(
-  checkSchema(
-    {
-      password: passwordSchema,
-      confirm_password: confirmPasswordScheme
-    },
-    ['body']
-  )
-)
-
-export const updateMeValidator = validate(
-  checkSchema(
-    {
-      name: {
-        optional: true, //đc phép có hoặc k
-        ...nameSchema, //phân rã nameSchema ra
-        notEmpty: undefined //ghi đè lên notEmpty của nameSchema
-      },
-      date_of_birth: {
-        optional: true, //đc phép có hoặc k
-        ...dateOfBirth, //phân rã nameSchema ra
-        notEmpty: undefined //ghi đè lên notEmpty của nameSchema
-      },
-      bio: {
-        optional: true,
-        isString: {
-          errorMessage: USERS_MESSAGES.BIO_MUST_BE_A_STRING
-        },
-        trim: true, //trim phát đặt cuối, nếu k thì nó sẽ lỗi validatior
-        isLength: {
-          options: {
-            min: 1,
-            max: 200
-          },
-          errorMessage: USERS_MESSAGES.BIO_LENGTH_MUST_BE_LESS_THAN_200
-        }
-      },
-      //giống bio
-      location: {
-        optional: true,
-        isString: {
-          errorMessage: USERS_MESSAGES.LOCATION_MUST_BE_A_STRING ////messages.ts thêm LOCATION_MUST_BE_A_STRING: 'Location must be a string'
-        },
-        trim: true,
-        isLength: {
-          options: {
-            min: 1,
-            max: 200
-          },
-          errorMessage: USERS_MESSAGES.LOCATION_LENGTH_MUST_BE_LESS_THAN_200 //messages.ts thêm LOCATION_LENGTH_MUST_BE_LESS_THAN_200: 'Location length must be less than 200'
-        }
-      },
-      //giống location
-      website: {
-        optional: true,
-        isString: {
-          errorMessage: USERS_MESSAGES.WEBSITE_MUST_BE_A_STRING ////messages.ts thêm WEBSITE_MUST_BE_A_STRING: 'Website must be a string'
-        },
-        trim: true,
-        isLength: {
-          options: {
-            min: 1,
-            max: 200
-          },
-
-          errorMessage: USERS_MESSAGES.WEBSITE_LENGTH_MUST_BE_LESS_THAN_200 //messages.ts thêm WEBSITE_LENGTH_MUST_BE_LESS_THAN_200: 'Website length must be less than 200'
-        }
-      },
-      username: {
-        optional: true,
-        isString: {
-          errorMessage: USERS_MESSAGES.USERNAME_MUST_BE_A_STRING ////messages.ts thêm USERNAME_MUST_BE_A_STRING: 'Username must be a string'
-        },
-        trim: true,
-        isLength: {
-          options: {
-            min: 1,
-            max: 50
-          },
-          errorMessage: USERS_MESSAGES.USERNAME_LENGTH_MUST_BE_LESS_THAN_50 //messages.ts thêm USERNAME_LENGTH_MUST_BE_LESS_THAN_50: 'Username length must be less than 50'
-        }
-      },
-      avatar: imageSchema,
-      cover_photo: imageSchema
-    },
-    ['body']
-  )
-)
-
-export const changePasswordValidator = validate(
-  //
-  checkSchema(
-    {
-      old_password: passwordSchema,
-      password: passwordSchema,
-      confirm_password: confirmPasswordScheme
-    },
-    ['body']
-  )
-)
+}, ['body']))

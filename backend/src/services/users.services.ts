@@ -1,419 +1,212 @@
-import User from '~/models/user.schema'
-import databaseServices from './database.services'
-import { LoginReqBody, RegisterReqBody, updateMeReqBody } from '~/models/request/user.requests'
+import User, { IUser } from '~/models/user.schema'
+import RefreshToken from '~/models/RefreshToken.shema'
+import KarmaLog from '~/models/karmaLog.schema'
+import Wish from '~/models/wish.schema'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
-import { TokenType, UserVerifyStatus } from '~/constants/enums'
-import { StringValue } from 'ms'
+import { TokenType } from '~/constants/enums'
+import { RegisterReqBody, UpdateProfileReqBody, UpdateSettingsReqBody } from '~/models/request/user.requests'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/message'
-import RefreshToken from '~/models/RefreshToken.shema'
-import { ObjectId } from 'mongodb'
-import { verify } from 'crypto'
 
-class UsersServices {
+class UsersService {
   private signAccessToken(user_id: string) {
     return signToken({
+      payload: { user_id, token_type: TokenType.AccessToken },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
-      payload: { user_id, token_type: TokenType.AccessToken }, //0
-      options: { expiresIn: process.env.ACCESS_TOKEN_EXPIRE_IN as StringValue }
+      options: {
+        expiresIn: (process.env.ACCESS_TOKEN_EXPIRES_IN as any) || '15m'
+      }
     })
   }
 
-  private signRefeshToken(user_id: string) {
+  private signRefreshToken(user_id: string) {
     return signToken({
+      payload: { user_id, token_type: TokenType.RefreshToken },
       privateKey: process.env.JWT_SECRET_REFRESH_TOKEN as string,
-      payload: { user_id, token_type: TokenType.RefreshToken }, //0
-      options: { expiresIn: process.env.REFRESH_TOKEN_EXPIRE_IN as StringValue }
+      options: {
+        expiresIn: (process.env.REFRESH_TOKEN_EXPIRES_IN as any) || '100d'
+      }
     })
   }
 
-  private signEmailVerifyToken(user_id: string) {
-    return signToken({
-      privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string,
-      payload: { user_id, token_type: TokenType.EmailVerificationToken }, //0
-      options: { expiresIn: process.env.EMAIL_VERIFY_TOKEN_EXPIRE_IN as StringValue }
-    })
+  private signAccessAndRefreshToken(user_id: string) {
+    return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
   }
 
   async register(payload: RegisterReqBody) {
-    const { email, password } = payload
-    const user_id = new ObjectId()
-    const email_verify_token = await this.signEmailVerifyToken(user_id.toString())
-    // tạo user và lưu vào database
-    const result = await databaseServices.users.insertOne(
-      new User({
-        ...payload,
-        username: `user${user_id.toString()}`,
-        _id: user_id,
-        date_of_birth: new Date(payload.date_of_birth), // ghi đè lên để ép kiểu dữ liệu chp date_of_birth
-        password: hashPassword(payload.password), //ghi đề lại password
-        email_verify_token
-      })
-    )
-    //lấy id của user vừa tạo để làm ac và rf
-    //ký ac và rf
-    const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id.toString()),
-      this.signRefeshToken(user_id.toString())
-    ])
-    // thiếu việc lưu rf vào database
-    await databaseServices.refreshTokens.insertOne(
-      new RefreshToken({
-        token: refresh_token,
-        user_id
-      })
-    )
-    // hàm gửi mail
+    const user = await User.create({
+      username: payload.username,
+      email: payload.email,
+      password: hashPassword(payload.password),
+      name: payload.name
+    })
 
-    console.log(`http://localhost:4115/users/verify-email/?email_verify_token=${email_verify_token}`)
+    const user_id = `${user._id}`
+    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id.toString())
 
-    // trả ra kết quả việc thêm (id của object vừa thêm)
+    // Lưu refresh token
+    const { iat, exp } = await import('jsonwebtoken').then((jwt) =>
+      jwt.default.decode(refresh_token) as { iat: number; exp: number }
+    )
+    await RefreshToken.create({
+      token: refresh_token,
+      user_id,
+      iat,
+      exp
+    })
+
     return {
       access_token,
-      refresh_token
+      refresh_token,
+      user: user.toJSON()
     }
   }
 
-  async checkEmail(email: string): Promise<Boolean> {
-    const user = await databaseServices.users.findOne({ email })
-    return Boolean(user)
-  }
+  async login(user_id: string) {
+    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
 
-  async login(payload: LoginReqBody) {
-    //tìm user bằng các email và password đã mã hóa
-    const user = await databaseServices.users.findOne({
-      ...payload, //
-      password: hashPassword(payload.password)
-    })
-    //nếu kh có thì báo lỗi
-    if (!user) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.UNPROCESSABLE_ENTITY, //422
-        message: USERS_MESSAGES.EMAIL_OR_PASSWORD_IS_INCORRECT
-      })
-    }
-    //nếu có thì phải tạo access và refresh từ user_id của user tìm được
-    const user_id = user._id.toString()
-    const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefeshToken(user_id)
-    ])
-    //
-    await databaseServices.refreshTokens.insertOne(
-      new RefreshToken({
-        token: refresh_token,
-        user_id: new ObjectId(user_id)
-      })
+    const { iat, exp } = await import('jsonwebtoken').then((jwt) =>
+      jwt.default.decode(refresh_token) as { iat: number; exp: number }
     )
+    await RefreshToken.create({
+      token: refresh_token,
+      user_id,
+      iat,
+      exp
+    })
+
+    // Cập nhật streak
+    await this.updateStreak(user_id)
+
+    const user = await User.findById(user_id)
+
     return {
       access_token,
-      refresh_token
+      refresh_token,
+      user: user?.toJSON()
     }
-  }
-
-  async checkRefreshToken({ user_id, refresh_token }: { user_id: string; refresh_token: string }) {
-    const refreshToken = databaseServices.refreshTokens.findOne({
-      user_id: new ObjectId(user_id),
-      token: refresh_token
-    })
-    // nếu không có thì báo lỗi
-    if (!refreshToken) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.UNAUTHORIZED,
-        message: USERS_MESSAGES.REFRESH_TOKEN_IS_INVALID
-      })
-    }
-    // nếu có thì thôi
   }
 
   async logout(refresh_token: string) {
-    await databaseServices.refreshTokens.deleteOne({ token: refresh_token })
+    await RefreshToken.deleteOne({ token: refresh_token })
   }
 
-  async checkEmailVerifyToken({
-    //
-    user_id,
-    email_verify_token
-  }: {
-    user_id: string
-    email_verify_token: string
-  }) {
-    //tìm user
-    const user = await databaseServices.users.findOne({
-      _id: new ObjectId(user_id),
-      email_verify_token
+  async refreshToken(user_id: string, old_refresh_token: string) {
+    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
+
+    await RefreshToken.deleteOne({ token: old_refresh_token })
+    const { iat, exp } = await import('jsonwebtoken').then((jwt) =>
+      jwt.default.decode(refresh_token) as { iat: number; exp: number }
+    )
+    await RefreshToken.create({
+      token: refresh_token,
+      user_id,
+      iat,
+      exp
     })
-    //nếu không có nghĩa là mã này cũ rồi, hoặc user bị xóa rồi
-    if (!user) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.UNPROCESSABLE_ENTITY, //422
-        message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_INVALID
-      })
+
+    return { access_token, refresh_token }
+  }
+
+  async getProfile(user_id: string) {
+    const user = await User.findById(user_id)
+    if (!user) throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    return user.toJSON()
+  }
+
+  async updateProfile(user_id: string, payload: UpdateProfileReqBody) {
+    const updateData: Record<string, any> = {}
+    if (payload.name) updateData.name = payload.name
+    if (payload.avatar) updateData.avatar = payload.avatar
+    if (payload.date_of_birth) updateData.date_of_birth = new Date(payload.date_of_birth)
+
+    const user = await User.findByIdAndUpdate(user_id, { $set: updateData }, { new: true, runValidators: true })
+    if (!user) throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    return user.toJSON()
+  }
+
+  async changePassword(user_id: string, old_password: string, new_password: string) {
+    const user = await User.findById(user_id).select('+password')
+    if (!user) throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+
+    if (user.password !== hashPassword(old_password)) {
+      throw new ErrorWithStatus({ message: USERS_MESSAGES.OLD_PASSWORD_INCORRECT, status: HTTP_STATUS.BAD_REQUEST })
     }
-    //nếu có thì soa
-    return true
+
+    user.password = hashPassword(new_password)
+    await user.save()
   }
 
-  // hàm đổi trạng thái verify của user
-  async checkVerifyEmail(user_id: string) {
-    //cập nhật thông tin của user đó
-    await databaseServices.users.updateOne(
-      //
-      {
-        _id: new ObjectId(user_id)
-      },
-      [
-        {
-          $set: {
-            verify: UserVerifyStatus.Verified,
-            email_verify_token: '',
-            updated_at: '$$NOW'
-          }
-        }
-      ]
-    )
+  async updateSettings(user_id: string, payload: UpdateSettingsReqBody) {
+    const updateObj: Record<string, string> = {}
+    if (payload.font) updateObj['settings.font'] = payload.font
+    if (payload.theme) updateObj['settings.theme'] = payload.theme
+    if (payload.language) updateObj['settings.language'] = payload.language
+
+    const user = await User.findByIdAndUpdate(user_id, { $set: updateObj }, { new: true })
+    if (!user) throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    return user.settings
   }
 
-  //lấy thông tin verify của user
-  async getUserVerifyStatus(user_id: string) {
-    const user = await databaseServices.users.findOne({ _id: new ObjectId(user_id) })
-    if (!user) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.UNAUTHORIZED, //401
-        message: USERS_MESSAGES.USER_NOT_FOUND
-      })
+  async getStats(user_id: string) {
+    const user = await User.findById(user_id)
+    if (!user) throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    return user.stats
+  }
+
+  async deleteAccount(user_id: string, password: string) {
+    const user = await User.findById(user_id).select('+password')
+    if (!user) throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+
+    if (user.password !== hashPassword(password)) {
+      throw new ErrorWithStatus({ message: USERS_MESSAGES.OLD_PASSWORD_INCORRECT, status: HTTP_STATUS.BAD_REQUEST })
     }
-    //nếu có user thì return
-    return user.verify
-  }
 
-  // hàm resend email verify token
-  async resendEmailVerifyToken(user_id: string) {
-    // tạo email verify token mới
-    const email_verify_token = await this.signEmailVerifyToken(user_id)
-    // cập nhật vào database
-    await databaseServices.users.updateOne(
-      {
-        _id: new ObjectId(user_id)
-      },
-      [
-        {
-          $set: {
-            email_verify_token,
-            updated_at: '$$NOW'
-          }
-        }
-      ] //
-    )
-    //gửi email
-    console.log(`http://localhost:4115/users/verify-email/?email_verify_token=${email_verify_token}`)
-    return
-  }
-
-  //
-  async signForgotPasswordToken(user_id: string) {
-    return signToken({
-      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string,
-      payload: { user_id, token_type: TokenType.EmailVerificationToken }, //0
-      options: { expiresIn: process.env.EMAIL_PASSWORD_TOKEN_EXPIRE_IN as StringValue }
-    })
-  }
-
-  //
-  async forgotPassword(email: string) {
-    //tìm user theo email
-    const user = (await databaseServices.users.findOne({ email })) as User
-    //lấy user_id
-    const user_id = (user._id as ObjectId).toString()
-    //tạo mã forgotPassword
-    const forgot_password_token = await this.signForgotPasswordToken(user_id)
-    //cập nhật thêm forgot_password_token cho user
-    await databaseServices.users.updateOne(
-      {
-        _id: user._id //
-      },
-      [
-        {
-          $set: {
-            forgot_password_token,
-            updated_at: '$$NOW'
-          }
-        }
-      ]
-    )
-    // gửi mail cái link
-    console.log(`http://localhost:8000/users/verify-email/?forgot_password_token=${forgot_password_token}`)
-  }
-
-  async checkForgotPasswordToken({
-    user_id,
-    forgot_password_token
-  }: {
-    user_id: string
-    forgot_password_token: string
-  }) {
-    const user = await databaseServices.users.findOne({
-      _id: new ObjectId(user_id),
-      forgot_password_token
-    })
-    if (!user) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.UNAUTHORIZED,
-        message: USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_INVALID
-      })
-    }
-    //còn có thì thui, kh có gì cạ
-  }
-  //
-  async resetPassword({ user_id, password }: { user_id: string; password: string }) {
-    //tìm và cập nhập password
-    await databaseServices.users.updateOne(
-      { _id: new ObjectId(user_id) }, //filter
-      [
-        {
-          $set: {
-            forgot_password_token: '',
-            password: hashPassword(password),
-            updated_at: '$$NOW'
-          }
-        }
-      ]
-    )
-  }
-  //
-  async getMe(user_id: string) {
-    const user = await databaseServices.users.findOne(
-      {
-        _id: new ObjectId(user_id)
-      }, //
-      {
-        projection: {
-          password: 0,
-          email_verify_token: 0,
-          forgot_password_token: 0
-        }
-      }
-    )
-    //
-    if (!user) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.NOT_FOUND,
-        message: USERS_MESSAGES.USER_NOT_FOUND
-      })
-    }
-    //
-    return user
-  }
-
-  async updateMe({ user_id, payload }: { user_id: string; payload: updateMeReqBody }) {
-    //payload này có thứ cân fix là date ò birth
-    const _payload = payload.date_of_birth //
-      ? { ...payload, date_of_birth: new Date(payload.date_of_birth) }
-      : payload
-
-    if (_payload.username) {
-      //nếu có truyền username
-      //tìm user có username này chưa,
-      const user = await databaseServices.users.findOne({ username: _payload.username })
-      if (user) {
-        //có là đã có người dùng
-        throw new ErrorWithStatus({
-          status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
-          message: USERS_MESSAGES.USERNAME_ALREADY_EXISTS
-        })
-      }
-    }
-    const user = await databaseServices.users.findOneAndUpdate(
-      { _id: new ObjectId(user_id) },
-      [
-        {
-          $set: {
-            ..._payload,
-            updated_at: '$$NOW'
-          }
-        }
-      ],
-      {
-        returnDocument: 'after',
-        projection: {
-          password: 0,
-          email_verify_token: 0,
-          forgot_password_token: 0
-        }
-      }
-    )
-    return user
-  }
-
-  async changePassword({
-    user_id,
-    old_password,
-    password
-  }: {
-    user_id: string
-    old_password: string
-    password: string
-  }) {
-    // tìm user với user_id và old_password để xem có user không, trước khi update
-    // password mới
-    const user = await databaseServices.users.findOne({
-      _id: new ObjectId(user_id),
-      password: hashPassword(old_password)
-    })
-    if (!user) {
-      throw new ErrorWithStatus({
-        status: HTTP_STATUS.UNPROCESSABLE_ENTITY, //422
-        message: USERS_MESSAGES.USER_NOT_FOUND
-      })
-    }
-    //nếu có thì đổi
-    await databaseServices.users.updateOne(
-      { _id: new ObjectId(user_id) }, //filter)
-      [
-        {
-          $set: {
-            password: hashPassword(password),
-            updated_at: '$$NOW'
-          }
-        }
-      ]
-    )
-    //nếu xong thì thui
-  }
-
-  async refreshToken({
-    user_id, //
-    refresh_token
-  }: {
-    user_id: string
-    refresh_token: string
-  }) {
-    //xóa rf token cũ
-    await databaseServices.refreshTokens.deleteOne({
-      token: refresh_token
-    })
-    //tạo hai mã mới và gửi cho người dùng
-    const [access_token, new_refresh_token] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefeshToken(user_id)
+    await Promise.all([
+      KarmaLog.deleteMany({ user_id }),
+      Wish.deleteMany({ user_id }),
+      RefreshToken.deleteMany({ user_id }),
+      User.findByIdAndDelete(user_id)
     ])
-    //
-    await databaseServices.refreshTokens.insertOne(
-      new RefreshToken({
-        token: new_refresh_token,
-        user_id: new ObjectId(user_id)
-      })
-    )
-    return {
-      access_token,
-      refresh_token: new_refresh_token
-    }
   }
 
-  //
+  async checkUsernameExist(username: string) {
+    const user = await User.findOne({ username })
+    return Boolean(user)
+  }
+
+  async checkEmailExist(email: string) {
+    const user = await User.findOne({ email })
+    return Boolean(user)
+  }
+
+  private async updateStreak(user_id: string) {
+    const user = await User.findById(user_id)
+    if (!user) return
+
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+    if (user.stats.lastActiveDate) {
+      const lastActive = new Date(user.stats.lastActiveDate)
+      const lastActiveDay = new Date(lastActive.getFullYear(), lastActive.getMonth(), lastActive.getDate())
+      const diffDays = Math.floor((today.getTime() - lastActiveDay.getTime()) / (1000 * 60 * 60 * 24))
+
+      if (diffDays === 1) {
+        user.stats.streak += 1
+      } else if (diffDays > 1) {
+        user.stats.streak = 1
+      }
+    } else {
+      user.stats.streak = 1
+    }
+
+    user.stats.lastActiveDate = now
+    await user.save()
+  }
 }
 
-const userServices = new UsersServices()
-export default userServices
+const usersService = new UsersService()
+export default usersService

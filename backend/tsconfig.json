@@ -1,31 +1,32 @@
 {
   "compilerOptions": {
-    "module": "CommonJS", // Quy định output module được sử dụng
-    "moduleResolution": "node16", //
-    "target": "ES2020", // Target ouput cho code
-    "outDir": "dist", // Đường dẫn output cho thư mục build
-    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
-    "strict": true /* Enable all strict type-checking options. */,
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "baseUrl": ".", // Đường dẫn base cho các import
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": [
+      "ES2020"
+    ],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "~/*": [
         "src/*"
-      ] // Đường dẫn tương đối cho các import (alias)
-    },
-    "types": [
-      "node"
-    ]
+      ]
+    }
   },
-  "ts-node": {
-    "require": [
-      "tsconfig-paths/register"
-    ]
-  },
-  "files": [
-    "src/type.d.ts"
-  ], // Các file dùng để defined global type cho dự án
   "include": [
     "src/**/*"
-  ] // Đường dẫn include cho các file cần build
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

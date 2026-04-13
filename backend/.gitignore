@@ -93,7 +93,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+dist/
 
 # Gatsby files
 .cache/
@@ -146,3 +146,9 @@ Beta
 0 / 0
 used queries
 1
+
+uploads/
+
+.DS_Store
+
+desktop.ini
