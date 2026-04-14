@@ -23,8 +23,18 @@ const PORT = process.env.PORT || 3000
 initFolder()
 
 // Middlewares (Giữ lại limit 10mb từ server.ts)
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://accrue-merit.vercel.app'
+]
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error('Bị CORS block chặn cửa rồi!'))
+        }
+    },
     credentials: true
 }))
 app.use(express.json({ limit: '10mb' }))
@@ -57,11 +67,11 @@ const startServer = async () => {
         app.listen(PORT, () => {
             console.log(`
 ╔══════════════════════════════════════════════╗
-║          🪷  AccrueMerit Backend  🪷          ║
+║          🪷  AccrueMerit Backend  🪷           ║
 ║──────────────────────────────────────────────║
-║  Server:    http://localhost:${PORT}              ║
-║  API Docs:  http://localhost:${PORT}/api-docs     ║
-║  Health:    http://localhost:${PORT}/health       ║
+║  Server:    http://localhost:${PORT}            ║
+║  API Docs:  http://localhost:${PORT}/api-docs   ║
+║  Health:    http://localhost:${PORT}/health     ║
 ╚══════════════════════════════════════════════╝
       `)
         })

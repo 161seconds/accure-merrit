@@ -90,7 +90,6 @@ class UsersService {
     await this.updateStreak(user_id)
 
     const userResponse = user.toObject()
-
     const { password, ...userWithoutPassword } = userResponse
 
     return {
