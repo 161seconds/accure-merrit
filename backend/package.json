@@ -5,9 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "npx tsx watch src/server.ts",
-    "build": "tsc",
-    "start": "npx tsx dist/server.js",
-    "lint": "eslint src/**/*.ts"
+    "start": "npx tsx src/server.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
