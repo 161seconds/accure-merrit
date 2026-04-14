@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "ignoreDeprecations": "6.0",
         "target": "ES2020",
         "useDefineForClassFields": true,
         "lib": [
@@ -19,15 +20,15 @@
         "noUnusedLocals": false,
         "noUnusedParameters": false,
         "noFallthroughCasesInSwitch": true,
-        "ignoreDeprecations": "6.0",
+        "baseUrl": "./src",
         "paths": {
             "@/*": [
-                "./src/*"
+                "./*"
             ]
         }
     },
     "include": [
         "src",
-        "vite.config.ts"
+        "vite-env.d.ts"
     ]
 }
