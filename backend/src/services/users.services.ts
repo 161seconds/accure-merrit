@@ -5,7 +5,7 @@ import Wish from '~/models/wish.schema'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType } from '~/constants/enums'
-import { RegisterReqBody, UpdateProfileReqBody, UpdateSettingsReqBody } from '~/models/request/user.requests'
+import { LoginReqBody, RegisterReqBody, UpdateProfileReqBody, UpdateSettingsReqBody } from '~/models/request/user.requests'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/message'
@@ -64,7 +64,17 @@ class UsersService {
     }
   }
 
-  async login(user_id: string) {
+  async login(payload: LoginReqBody) {
+    const user = await User.findOne({ username: payload.username }).select('+password')
+    if (!user) {
+      throw new ErrorWithStatus({ message: 'Tài khoản không tồn tại', status: HTTP_STATUS.UNPROCESSABLE_ENTITY })
+    }
+
+    if (user.password !== hashPassword(payload.password)) {
+      throw new ErrorWithStatus({ message: 'Mật khẩu không chính xác', status: HTTP_STATUS.UNPROCESSABLE_ENTITY })
+    }
+
+    const user_id = user._id.toString()
     const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
 
     const { iat, exp } = await import('jsonwebtoken').then((jwt) =>
@@ -77,15 +87,16 @@ class UsersService {
       exp
     })
 
-    // Cập nhật streak
     await this.updateStreak(user_id)
 
-    const user = await User.findById(user_id)
+    const userResponse = user.toObject()
+
+    const { password, ...userWithoutPassword } = userResponse
 
     return {
       access_token,
       refresh_token,
-      user: user?.toJSON()
+      user: userWithoutPassword
     }
   }
 

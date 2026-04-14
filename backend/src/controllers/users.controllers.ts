@@ -21,8 +21,11 @@ export const registerController = async (req: Request<any, any, RegisterReqBody>
 }
 
 export const loginController = async (req: Request<any, any, LoginReqBody>, res: Response) => {
-  const { user_id } = req.body as any
+  const user = (req as any).user
+  const user_id = user._id.toString()
+
   const result = await usersService.login(user_id)
+
   return res.json({
     message: USERS_MESSAGES.LOGIN_SUCCESS,
     result

@@ -14,7 +14,7 @@ export default function App() {
     return (
         <>
             <Toaster
-                position="top-center"
+                position="top-right"
                 toastOptions={{
                     style: {
                         background: 'rgba(13, 10, 4, 0.95)',

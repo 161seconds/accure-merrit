@@ -30,12 +30,14 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex-1 flex items-center justify-center px-5">
+        <div className="flex items-center justify-center flex-1 px-5">
             <div className="w-full max-w-[400px] card p-10 shadow-[0_20px_40px_rgba(0,0,0,0.9)]">
-                <h1 className="text-center text-2xl font-bold text-gold-dim uppercase tracking-wider mb-8">Đăng Nhập</h1>
+                <h1 className="mb-8 text-2xl font-bold tracking-wider text-center uppercase text-gold-dim">Đăng Nhập</h1>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     <input
+                        id="username"
+                        name="username"
                         type="text"
                         className="input-field"
                         placeholder="Tên tài khoản"
@@ -47,7 +49,7 @@ export default function LoginPage() {
                     <div className="relative">
                         <input
                             type={showPw ? 'text' : 'password'}
-                            className="input-field pr-10"
+                            className="pr-10 input-field"
                             placeholder="Mật khẩu"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -56,20 +58,20 @@ export default function LoginPage() {
                         <button
                             type="button"
                             onClick={() => setShowPw(!showPw)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-parchment/40 hover:text-gold-dim transition-colors bg-transparent border-none cursor-pointer"
+                            className="absolute transition-colors -translate-y-1/2 bg-transparent border-none cursor-pointer right-3 top-1/2 text-parchment/40 hover:text-gold-dim"
                         >
                             {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                     </div>
 
                     <div className="flex justify-between text-xs">
-                        <span className="text-parchment/50 cursor-pointer hover:text-gold-dim transition-colors">Quên mật khẩu?</span>
-                        <Link to="/register" className="text-parchment/50 hover:text-gold-dim transition-colors no-underline">
+                        <span className="transition-colors cursor-pointer text-parchment/50 hover:text-gold-dim">Quên mật khẩu?</span>
+                        <Link to="/register" className="no-underline transition-colors text-parchment/50 hover:text-gold-dim">
                             Chưa có tài khoản?
                         </Link>
                     </div>
 
-                    <button type="submit" disabled={loading} className="btn-gold w-full py-3 rounded-full text-base mt-2">
+                    <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-base rounded-full btn-gold">
                         {loading ? 'Đang xử lý...' : 'Đăng Nhập'}
                     </button>
                 </form>
