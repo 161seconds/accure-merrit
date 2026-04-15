@@ -16,10 +16,16 @@ export default function LoginPage() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         setLoading(true)
+
+        const loginData = {
+            username: username,
+            password: password
+        }
+
         try {
-            const res = await authApi.login({ username: username.trim(), password })
-            const { access_token, refresh_token } = res.data.result
-            await login(access_token, refresh_token)
+            const res = await authApi.login(loginData);
+            const { access_token, refresh_token, user } = res.data.result
+            login(access_token, refresh_token, user)
             toast.success('Đăng nhập thành công ✦')
             navigate('/')
         } catch (err: any) {

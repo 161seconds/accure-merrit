@@ -29,7 +29,15 @@ api.interceptors.response.use(
                 const refresh_token = localStorage.getItem('refresh_token')
                 if (!refresh_token) throw new Error('No refresh token')
 
-                const res = await axios.post(`${API_BASE_URL}/refresh-token`, { refresh_token })
+                const res = await axios.post(
+                    `${API_BASE_URL}/users/refresh-token`,
+                    { refresh_token },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${refresh_token}`
+                        }
+                    }
+                )
                 const { access_token, refresh_token: new_refresh } = res.data.result
 
                 localStorage.setItem('access_token', access_token)

@@ -24,8 +24,8 @@ export default function RegisterPage() {
         setLoading(true)
         try {
             const res = await authApi.register({ ...form, name: form.name || form.username })
-            const { access_token, refresh_token } = res.data.result
-            await login(access_token, refresh_token)
+            const { access_token, refresh_token, user } = res.data.result
+            login(access_token, refresh_token, user)
             toast.success('Đăng ký thành công!')
             navigate('/')
         } catch (err: any) {
