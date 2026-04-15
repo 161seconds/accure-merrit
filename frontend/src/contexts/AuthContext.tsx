@@ -7,9 +7,10 @@ interface AuthContextType {
     user: User | null
     isAuthenticated: boolean
     isLoading: boolean
-    login: (access_token: string, refresh_token: string, user: User) => void    
+    login: (access_token: string, refresh_token: string, user?: User) => Promise<void>
     logout: () => Promise<void>
     updateUser: (user: User) => void
+    refreshProfile: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -18,23 +19,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
+    // Khởi tạo: check token và lấy profile
     useEffect(() => {
         const token = localStorage.getItem('access_token')
         if (token) {
             userApi
                 .getProfile()
                 .then((res) => setUser(res.data.result))
-                .catch(() => localStorage.clear())
+                .catch(() => {
+                    // Token hết hạn và refresh cũng thất bại → clear
+                    localStorage.clear()
+                    setUser(null)
+                })
                 .finally(() => setIsLoading(false))
         } else {
             setIsLoading(false)
         }
     }, [])
 
-    const login = (access_token: string, refresh_token: string, userData: User) => {
+    const login = async (access_token: string, refresh_token: string, userData?: User) => {
         localStorage.setItem('access_token', access_token)
         localStorage.setItem('refresh_token', refresh_token)
-        setUser(userData) 
+
+        // Nếu đã có user data từ login response thì dùng luôn, không gọi API thêm
+        if (userData) {
+            setUser(userData)
+        } else {
+            try {
+                const res = await userApi.getProfile()
+                setUser(res.data.result)
+            } catch {
+                // Nếu lỗi thì vẫn set token, user sẽ null
+                localStorage.clear()
+            }
+        }
     }
 
     const logout = async () => {
@@ -48,8 +66,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const updateUser = (updatedUser: User) => setUser(updatedUser)
 
+    const refreshProfile = async () => {
+        try {
+            const res = await userApi.getProfile()
+            setUser(res.data.result)
+        } catch { }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, updateUser }}>
+        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, updateUser, refreshProfile }}>
             {children}
         </AuthContext.Provider>
     )

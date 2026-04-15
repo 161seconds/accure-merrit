@@ -9,7 +9,7 @@ import { Plus, Trash2 } from 'lucide-react'
 const CATEGORIES = ['Từ thiện', 'Gia đình', 'Học tập', 'Công việc', 'Sức khoẻ', 'Môi trường', 'Khác']
 
 export default function KarmaPage() {
-    const { user, updateUser } = useAuth()
+    const { user, refreshProfile } = useAuth()
     const [logs, setLogs] = useState<KarmaLog[]>([])
     const [tab, setTab] = useState<'duc' | 'toi'>('duc')
     const [showForm, setShowForm] = useState(false)
@@ -34,10 +34,7 @@ export default function KarmaPage() {
             setForm({ title: '', description: '', points: 5, category: 'Khác' })
             setShowForm(false)
             fetchLogs()
-            // Refresh stats
-            const { userApi } = await import('@/api/user.api')
-            const statsRes = await userApi.getProfile()
-            if (user) updateUser(statsRes.data.result)
+            refreshProfile()
         } catch (err: any) {
             toast.error(err.response?.data?.message || 'Lỗi')
         } finally {
@@ -50,18 +47,16 @@ export default function KarmaPage() {
             await karmaApi.delete(id)
             toast.success('Đã xoá')
             fetchLogs()
-            const { userApi } = await import('@/api/user.api')
-            const statsRes = await userApi.getProfile()
-            if (user) updateUser(statsRes.data.result)
+            refreshProfile()
         } catch { }
     }
 
     return (
-        <div className="flex-1 flex flex-col px-4 py-4 overflow-hidden">
+        <div className="flex flex-col flex-1 px-4 py-4 overflow-hidden">
             <PageTitle badge="Sổ tay" title="Karma" highlight="Logbook" />
 
             {/* Tabs */}
-            <div className="flex gap-2 mb-4 justify-center">
+            <div className="flex justify-center gap-2 mb-4">
                 {(['duc', 'toi'] as const).map((t) => (
                     <button
                         key={t}
@@ -81,7 +76,7 @@ export default function KarmaPage() {
             {/* Add button */}
             <button
                 onClick={() => setShowForm(!showForm)}
-                className="btn-gold mb-4 flex items-center justify-center gap-2 mx-auto"
+                className="flex items-center justify-center gap-2 mx-auto mb-4 btn-gold"
             >
                 <Plus size={14} /> Thêm bản ghi
             </button>
@@ -96,14 +91,14 @@ export default function KarmaPage() {
                         onChange={(e) => setForm({ ...form, title: e.target.value })}
                     />
                     <textarea
-                        className="input-field resize-none h-16"
+                        className="h-16 resize-none input-field"
                         placeholder="Mô tả (tuỳ chọn)"
                         value={form.description}
                         onChange={(e) => setForm({ ...form, description: e.target.value })}
                     />
                     <div className="flex gap-3">
                         <select
-                            className="input-field flex-1"
+                            className="flex-1 input-field"
                             value={form.category}
                             onChange={(e) => setForm({ ...form, category: e.target.value })}
                         >
@@ -111,7 +106,7 @@ export default function KarmaPage() {
                         </select>
                         <input
                             type="number"
-                            className="input-field w-20 text-center"
+                            className="w-20 text-center input-field"
                             min={1}
                             max={100}
                             value={form.points}
@@ -127,14 +122,14 @@ export default function KarmaPage() {
             {/* List */}
             <div className="flex-1 overflow-y-auto space-y-2 max-w-[500px] mx-auto w-full">
                 {logs.length === 0 ? (
-                    <div className="text-center text-parchment/30 text-sm mt-10">Chưa có bản ghi nào</div>
+                    <div className="mt-10 text-sm text-center text-parchment/30">Chưa có bản ghi nào</div>
                 ) : (
                     logs.map((log) => (
-                        <div key={log._id} className="card px-4 py-3 flex items-center justify-between group">
+                        <div key={log._id} className="flex items-center justify-between px-4 py-3 card group">
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                     <span className={`w-2 h-2 rounded-full shrink-0 ${log.type === 'duc' ? 'bg-jade-light shadow-[0_0_4px_#4A9B6A]' : 'bg-red/70'}`} />
-                                    <span className="text-sm text-parchment truncate">{log.title}</span>
+                                    <span className="text-sm truncate text-parchment">{log.title}</span>
                                 </div>
                                 <div className="text-[10px] text-parchment/30 mt-0.5 ml-4">
                                     {log.category} · {new Date(log.created_at).toLocaleDateString('vi-VN')}
@@ -146,7 +141,7 @@ export default function KarmaPage() {
                                 </span>
                                 <button
                                     onClick={() => handleDelete(log._id)}
-                                    className="opacity-0 group-hover:opacity-100 text-parchment/30 hover:text-red transition-all bg-transparent border-none cursor-pointer"
+                                    className="transition-all bg-transparent border-none opacity-0 cursor-pointer group-hover:opacity-100 text-parchment/30 hover:text-red"
                                 >
                                     <Trash2 size={14} />
                                 </button>

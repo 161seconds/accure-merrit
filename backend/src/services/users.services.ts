@@ -16,7 +16,7 @@ class UsersService {
       payload: { user_id, token_type: TokenType.AccessToken },
       privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
       options: {
-        expiresIn: (process.env.ACCESS_TOKEN_EXPIRES_IN as any) || '15m'
+        expiresIn: (process.env.ACCESS_TOKEN_EXPIRES_IN as any) || '120m'
       }
     })
   }

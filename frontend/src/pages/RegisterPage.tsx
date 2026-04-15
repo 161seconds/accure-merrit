@@ -25,7 +25,7 @@ export default function RegisterPage() {
         try {
             const res = await authApi.register({ ...form, name: form.name || form.username })
             const { access_token, refresh_token, user } = res.data.result
-            login(access_token, refresh_token, user)
+            await login(access_token, refresh_token, user)
             toast.success('Đăng ký thành công!')
             navigate('/')
         } catch (err: any) {
@@ -37,9 +37,9 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="flex-1 flex items-center justify-center px-5 py-6">
+        <div className="flex items-center justify-center flex-1 px-5 py-6">
             <div className="w-full max-w-[450px] card p-10 shadow-[0_20px_40px_rgba(0,0,0,0.9)]">
-                <h1 className="text-center text-2xl font-bold text-gold-dim uppercase tracking-wider mb-8">Đăng Ký</h1>
+                <h1 className="mb-8 text-2xl font-bold tracking-wider text-center uppercase text-gold-dim">Đăng Ký</h1>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <input className="input-field" placeholder="Tên tài khoản" value={form.username} onChange={update('username')} required />
@@ -49,7 +49,7 @@ export default function RegisterPage() {
                     <div className="relative">
                         <input
                             type={showPw ? 'text' : 'password'}
-                            className="input-field pr-10"
+                            className="pr-10 input-field"
                             placeholder="Mật khẩu (tối thiểu 6 ký tự)"
                             value={form.password}
                             onChange={update('password')}
@@ -58,7 +58,7 @@ export default function RegisterPage() {
                         <button
                             type="button"
                             onClick={() => setShowPw(!showPw)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-parchment/40 hover:text-gold-dim bg-transparent border-none cursor-pointer"
+                            className="absolute -translate-y-1/2 bg-transparent border-none cursor-pointer right-3 top-1/2 text-parchment/40 hover:text-gold-dim"
                         >
                             {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
@@ -73,13 +73,13 @@ export default function RegisterPage() {
                         required
                     />
 
-                    <button type="submit" disabled={loading} className="btn-gold w-full py-3 rounded-full text-base mt-2">
+                    <button type="submit" disabled={loading} className="w-full py-3 mt-2 text-base rounded-full btn-gold">
                         {loading ? 'Đang xử lý...' : 'Tạo Tài Khoản'}
                     </button>
 
-                    <div className="text-center text-xs text-parchment/50 mt-2">
+                    <div className="mt-2 text-xs text-center text-parchment/50">
                         Đã có tài khoản?{' '}
-                        <Link to="/login" className="text-gold-dim font-bold no-underline hover:text-gold-light">
+                        <Link to="/login" className="font-bold no-underline text-gold-dim hover:text-gold-light">
                             Đăng nhập
                         </Link>
                     </div>

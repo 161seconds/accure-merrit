@@ -16,16 +16,10 @@ export default function LoginPage() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         setLoading(true)
-
-        const loginData = {
-            username: username,
-            password: password
-        }
-
         try {
-            const res = await authApi.login(loginData);
+            const res = await authApi.login({ username: username.trim(), password })
             const { access_token, refresh_token, user } = res.data.result
-            login(access_token, refresh_token, user)
+            await login(access_token, refresh_token, user)
             toast.success('Đăng nhập thành công ✦')
             navigate('/')
         } catch (err: any) {
@@ -42,8 +36,6 @@ export default function LoginPage() {
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     <input
-                        id="username"
-                        name="username"
                         type="text"
                         className="input-field"
                         placeholder="Tên tài khoản"
