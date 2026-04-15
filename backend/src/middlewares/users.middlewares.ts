@@ -110,10 +110,9 @@ export const accessTokenValidator = (req: Request, res: Response, next: NextFunc
   const token = authHeader.split(' ')[1]
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as TokenPayload
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS_TOKEN as string) as TokenPayload
 
     req.decoded_authorization = decoded
-
     next()
   } catch (error) {
     throw new ErrorWithStatus({
@@ -143,7 +142,7 @@ export const refreshTokenValidator = (req: Request, res: Response, next: NextFun
   }
 
   try {
-    const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET as string) as TokenPayload
+    const decoded = jwt.verify(refresh_token, process.env.JWT_SECRET_REFRESH_TOKEN as string) as TokenPayload
     req.decoded_refresh_token = decoded
     next()
   } catch (error) {
