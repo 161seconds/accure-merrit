@@ -11,8 +11,8 @@ const LEAF_COLORS = ["#73C92D", "#8EDE35", "#FFD700", "#FACC15", "#4ADE80"];
 const CLUSTER_COLORS = ["#FDE047", "#FEF08A", "#86EFAC", "#4ADE80", "#FBBF24"];
 
 const GLOW_INTENSITY = 2.5;
-const FOG_COLOR = "#050a06"; // Đổi nhẹ sang tone rêu tối cho hợp màu lá
-const AMBIENT_COLOR = "#1a1505"; // Tone ấm nhẹ
+const FOG_COLOR = "#0f1a14";
+const AMBIENT_COLOR = "#2a2515";
 
 // ─── SEEDED RANDOM ───
 function seededRandom(seed: number) {
@@ -184,6 +184,47 @@ export function KarmaTreeCanvas({
         const pointLight2 = new THREE.PointLight("#86EFAC", 0.8, 20);
         pointLight2.position.set(-3, 4, 2);
         scene.add(pointLight2);
+        const ribbonGeo = new THREE.PlaneGeometry(0.15, 0.8);
+        ribbonGeo.translate(0, -0.4, 0);
+        const ribbonMat = new THREE.MeshBasicMaterial({
+            color: "dc2626",
+            side: THREE.DoubleSide,
+        });
+        const ribbons: THREE.Mesh[] = [];
+        branches.filter(b => b.depth === 3).forEach((b, i) => {
+            if (Math.random() > 0.7) {
+                const ribbon = new THREE.Mesh(ribbonGeo, ribbonMat);
+                ribbon.position.copy(b.end);
+                ribbon.rotation.y = Math.random() * Math.PI;
+                scene.add(ribbon);
+                ribbons.push(ribbon);
+            }
+        });
+
+        const firefliesCount = 150;
+        const firefliesGeo = new THREE.BufferGeometry();
+        const firefliesPos = new Float32Array(firefliesCount * 3);
+        const firefliesPhase = new Float32Array(firefliesCount);
+        for (let i = 0; i < firefliesCount; i++) {
+            firefliesPos[i * 3] = (Math.random() - 0.5) * 15;
+            firefliesPos[i * 3 + 1] = Math.random() * 8;
+            firefliesPos[i * 3 + 2] = (Math.random() - 0.5) * 15;
+            firefliesPhase[i] = Math.random() * Math.PI * 2;
+        }
+        firefliesGeo.setAttribute("position", new THREE.BufferAttribute(firefliesPos, 3));
+        firefliesGeo.setAttribute("phase", new THREE.BufferAttribute(firefliesPhase, 1));
+
+        const firefliesMat = new THREE.PointsMaterial({
+            size: 0.08,
+            color: "#FACC15",
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+
+        const fireflies = new THREE.Points(firefliesGeo, firefliesMat);
+        scene.add(fireflies);
 
         const groundGeo = new THREE.CircleGeometry(30, 32);
         const groundMat = new THREE.MeshStandardMaterial({
@@ -329,6 +370,27 @@ export function KarmaTreeCanvas({
 
             pointLight1.intensity = 1.5 + Math.sin(time * 1.2) * 0.3;
             pointLight2.intensity = 0.8 + Math.sin(time * 0.9 + 1) * 0.2;
+
+            ribbons.forEach((ribbon, i) => {
+                ribbon.rotation.x = Math.sin(time * 2 + i) * 0.15;
+                ribbon.rotation.z = Math.cos(time * 1.5 + i) * 0.1;
+            });
+
+            const positions = fireflies.geometry.attributes.position.array as Float32Array;
+            const phases = fireflies.geometry.attributes.phase.array as Float32Array;
+
+            for (let i = 0; i < firefliesCount; i++) {
+                positions[i * 3 + 1] += Math.sin(time * 0.5 + phases[i]) * 0.01;
+                if (positions[i * 3 + 1] > 8) positions[i * 3 + 1] = -1;
+
+                positions[i * 3] += Math.sin(time * 0.3 + phases[i]) * 0.005;
+                positions[i * 3 + 2] += Math.cos(time * 0.4 + phases[i]) * 0.005;
+            }
+            fireflies.geometry.attributes.position.needsUpdate = true;
+
+            firefliesMat.opacity = 0.4 + Math.sin(time * 3) * 0.4;
+
+            pointLight1.intensity = 1.5 + Math.sin(time * 1.2) * 0.3;
 
             renderer.render(scene, camera);
         }
