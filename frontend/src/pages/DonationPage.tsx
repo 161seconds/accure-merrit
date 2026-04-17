@@ -7,12 +7,7 @@ const topDonors = [
     { id: 2, name: 'Nguyễn Văn A', amount: 20000000, message: 'Hồi hướng công đức cho gia tiên' },
     { id: 3, name: 'Trần Thị B', amount: 15000000, message: 'Gieo duyên xây chùa' },
     { id: 4, name: 'Lê Hoàng C', amount: 10000000, message: 'Tùy hỷ công đức' },
-    { id: 5, name: 'Phạm Đại D', amount: 5000000, message: 'Bình an cho gia đình' },
-    { id: 6, name: 'Gia đình Phật tử An', amount: 3000000, message: '' },
-    { id: 7, name: 'Phật tử Ẩn danh', amount: 2000000, message: 'Nam mô A Di Đà Phật' },
-    { id: 8, name: 'Hoàng Văn E', amount: 1500000, message: '' },
-    { id: 9, name: 'Vũ Thị F', amount: 1000000, message: '' },
-    { id: 10, name: 'Đặng Ngọc G', amount: 500000, message: 'Tâm thành kính' },
+    { id: 5, name: 'Phạm Đại D', amount: 5000000, message: 'Bình an cho gia đình' }
 ];
 
 const PRESET_AMOUNTS = [50000, 100000, 200000, 500000];
@@ -37,14 +32,14 @@ export default function DonationPage() {
 
     return (
         <div className="min-h-screen bg-[#0f1a14] pt-28 pb-16 px-6 relative overflow-hidden">
-            =            <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-gold-light/5 blur-[120px] pointer-events-none" />
+            <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-gold-light/5 blur-[120px] pointer-events-none" />
             <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-jade-light/5 blur-[150px] pointer-events-none" />
 
             <div className="relative z-10 grid max-w-6xl grid-cols-1 gap-10 mx-auto lg:grid-cols-12">
 
-                =                <div className="lg:col-span-7 space-y-10 animate-[fadeIn_0.6s_ease]">
+                <div className="lg:col-span-7 space-y-10 animate-[fadeIn_0.6s_ease]">
 
-                    =                    <section className="bg-[#0a100d]/80 backdrop-blur-md border border-white/5 rounded-3xl p-8 shadow-2xl">
+                    <section className="bg-[#0a100d]/80 backdrop-blur-md border border-white/5 rounded-3xl p-8 shadow-2xl">
                         <div className="text-[10px] tracking-[0.3em] text-jade-light uppercase mb-3 flex items-center gap-2">
                             <Sparkles size={14} /> Sự kiện nổi bật
                         </div>

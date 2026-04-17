@@ -1,12 +1,13 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Home, BookOpen, Flame, Bell, Settings } from 'lucide-react'
+import { Home, BookOpen, Flame, Bell, ClipboardList, Heart } from 'lucide-react'
 
 const navItems = [
     { path: '/', icon: Home, label: 'Trang chủ' },
     { path: '/karma', icon: BookOpen, label: 'Sổ tay' },
     { path: '/incense', icon: Flame, label: 'Thắp nhang' },
     { path: '/wooden-fish', icon: Bell, label: 'Gõ mõ' },
-    { path: '/settings', icon: Settings, label: 'Cài đặt' }
+    { path: '/tasks', icon: ClipboardList, label: 'Nhiệm vụ' },
+    { path: '/donate', icon: Heart, label: 'Quyên góp' }
 ]
 
 export default function Footer() {
@@ -14,7 +15,7 @@ export default function Footer() {
     const navigate = useNavigate()
 
     return (
-        <nav className="sticky bottom-0 z-50 flex justify-around items-center py-2 pb-3 bg-gradient-to-t from-ink/95 to-transparent border-t border-gold/10">
+        <nav className="sticky bottom-0 z-50 flex items-center justify-around py-2 pb-3 border-t bg-gradient-to-t from-ink/95 to-transparent border-gold/10">
             {navItems.map((item) => {
                 const active = location.pathname === item.path
                 return (

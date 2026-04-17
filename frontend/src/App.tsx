@@ -11,6 +11,7 @@ import WoodenFishPage from '@/pages/WoodenFishPage'
 import SettingsPage from '@/pages/SettingsPage'
 import DonationPage from '@/pages/DonationPage'
 import ChatPage from '@/pages/ChatPage'
+import TaskPage from '@/pages/TaskPage'
 
 export default function App() {
     return (
@@ -30,7 +31,6 @@ export default function App() {
 
             <Routes>
                 <Route element={<Layout />}>
-                    {/* Public */}
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
 
@@ -40,7 +40,7 @@ export default function App() {
                         <Route path="/incense" element={<IncensePage />} />
                         <Route path="/wooden-fish" element={<WoodenFishPage />} />
                         <Route path="/settings" element={<SettingsPage />} />
-
+                        <Route path="/tasks" element={<TaskPage />} />
                         <Route path="/donate" element={<DonationPage />} />
                         <Route path="/chat" element={<ChatPage />} />
                     </Route>
