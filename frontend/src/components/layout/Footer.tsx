@@ -15,21 +15,20 @@ export default function Footer() {
     const navigate = useNavigate()
 
     return (
-        <nav className="sticky bottom-0 z-50 flex items-center justify-around py-2 pb-3 border-t bg-gradient-to-t from-ink/95 to-transparent border-gold/10">
-            {navItems.map((item) => {
-                const active = location.pathname === item.path
-                return (
-                    <button
-                        key={item.path}
-                        onClick={() => navigate(item.path)}
-                        className={`flex flex-col items-center gap-0.5 px-2 py-1 min-w-[52px] text-[8px] uppercase tracking-wider transition-colors cursor-pointer border-none bg-transparent ${active ? 'text-gold' : 'text-parchment/35 hover:text-gold'
-                            }`}
-                    >
-                        <item.icon size={17} className={active ? 'drop-shadow-[0_0_5px_rgba(201,168,76,0.6)]' : ''} />
-                        {item.label}
-                    </button>
-                )
-            })}
+        <nav className="fixed bottom-0 left-0 z-50 flex items-center justify-around w-full py-2 pb-3 border-t bg-gradient-to-t from-ink/95 to-transparent border-gold/10">            {navItems.map((item) => {
+            const active = location.pathname === item.path
+            return (
+                <button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className={`flex flex-col items-center gap-0.5 px-2 py-1 min-w-[52px] text-[8px] uppercase tracking-wider transition-colors cursor-pointer border-none bg-transparent ${active ? 'text-gold' : 'text-parchment/35 hover:text-gold'
+                        }`}
+                >
+                    <item.icon size={17} className={active ? 'drop-shadow-[0_0_5px_rgba(201,168,76,0.6)]' : ''} />
+                    {item.label}
+                </button>
+            )
+        })}
         </nav>
     )
 }

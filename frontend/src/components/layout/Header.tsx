@@ -14,27 +14,22 @@ export default function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 bg-gradient-to-b from-ink/95 to-transparent">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 no-underline">
-                <div className="w-8 h-8 border border-gold rounded-full flex items-center justify-center text-sm shadow-[0_0_10px_rgba(201,168,76,0.3)]">
-                    🪷
-                </div>
-                <div>
-                    <span className="font-display text-sm font-bold text-gold-light tracking-widest">ACCRUE MERIT</span>
-                    <span className="block text-[8px] text-gold-dim tracking-[0.22em]">TÍCH ĐỨC HÀNH THIỆN</span>
-                </div>
-            </Link>
+        <header className="fixed top-0 left-0 z-50 flex items-center justify-between w-full px-6 py-3 bg-gradient-to-b from-ink/95 to-transparent">            <Link to="/" className="flex items-center gap-2 no-underline">
+            <div className="w-8 h-8 border border-gold rounded-full flex items-center justify-center text-sm shadow-[0_0_10px_rgba(201,168,76,0.3)]">
+                🪷
+            </div>
+            <div>
+                <span className="text-sm font-bold tracking-widest font-display text-gold-light">ACCRUE MERIT</span>
+                <span className="block text-[8px] text-gold-dim tracking-[0.22em]">TÍCH ĐỨC HÀNH THIỆN</span>
+            </div>
+        </Link>
 
-            {/* Right side */}
             {isAuthenticated && user ? (
                 <div className="flex items-center gap-3">
-                    {/* Streak badge */}
                     <div className="hidden sm:block px-3 py-1 rounded-full text-[10px] text-gold tracking-wider border border-gold/30 bg-gold/5">
                         🔥 {user.stats.streak} ngày
                     </div>
 
-                    {/* Avatar + menu */}
                     <div className="relative">
                         <button
                             onClick={() => setMenuOpen(!menuOpen)}
@@ -45,7 +40,7 @@ export default function Header() {
 
                         {menuOpen && (
                             <div className="absolute top-[140%] right-0 bg-ink/95 backdrop-blur-xl border border-gold/25 rounded-lg min-w-[160px] py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.8)] animate-[fadeIn_0.2s_ease]">
-                                <div className="px-4 py-2 text-xs text-gold-dim border-b border-gold/10">{user.name}</div>
+                                <div className="px-4 py-2 text-xs border-b text-gold-dim border-gold/10">{user.name}</div>
                                 <button
                                     onClick={() => { setMenuOpen(false); navigate('/settings') }}
                                     className="w-full px-4 py-2.5 text-left text-xs text-parchment flex items-center gap-2.5 hover:bg-gold/10 transition-colors"
@@ -64,9 +59,9 @@ export default function Header() {
                 </div>
             ) : (
                 <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold text-parchment/60">
-                    <Link to="/login" className="hover:text-gold-light transition-colors">Đăng nhập</Link>
+                    <Link to="/login" className="transition-colors hover:text-gold-light">Đăng nhập</Link>
                     <span className="text-gold/30">|</span>
-                    <Link to="/register" className="hover:text-gold-light transition-colors">Đăng ký</Link>
+                    <Link to="/register" className="transition-colors hover:text-gold-light">Đăng ký</Link>
                 </div>
             )}
         </header>
