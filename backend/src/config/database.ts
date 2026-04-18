@@ -1,11 +1,14 @@
 import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+dotenv.config()
 
 class DatabaseConfig {
     private uri: string
 
     constructor() {
-        this.uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/accrue-merit'
+        this.uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/tichduc_db';
     }
+
 
     async connect() {
         try {

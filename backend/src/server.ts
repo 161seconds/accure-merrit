@@ -13,8 +13,10 @@ import staticRouter from '~/routes/static.routes'
 import { defaultErrorHandler } from '~/middlewares/error.middlewares'
 import { initFolder } from '~/utils/file'
 
+import missionRoutes from './routes/mission.routes';
+
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 5000
 
 initFolder()
 
@@ -27,12 +29,13 @@ app.use(cors({
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true)
         } else {
-            callback(new Error('Bị CORS block chặn cửa rồi!'))
+            callback(new Error('Bị CORS block'))
         }
     },
     credentials: true
 }))
 app.use(express.json({ limit: '10mb' }))
+app.use('/api/missions', missionRoutes);
 app.use(express.urlencoded({ extended: true }))
 
 // Swagger API Docs
@@ -69,7 +72,7 @@ const startServer = async () => {
       `)
         })
     } catch (error) {
-        console.error('❌ Lỗi không thể khởi động Server:', error)
+        console.error('Lỗi không thể khởi động Server:', error)
         process.exit(1)
     }
 }

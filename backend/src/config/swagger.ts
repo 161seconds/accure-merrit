@@ -477,7 +477,7 @@ export const setupSwagger = (app: Express) => {
             customfavIcon: ''
         })
     )
-    console.log('📖 Swagger UI: http://localhost:' + (process.env.PORT || 3000) + '/api-docs')
+    console.log('📖 Swagger UI: http://localhost:' + (process.env.PORT || 5000) + '/api-docs')
 }
 
 export { swaggerSpec }

@@ -24,21 +24,18 @@ export default function TaskPage() {
         const fetchMissions = async () => {
             try {
                 setIsLoading(true);
+                setError(null);
                 const response = await fetch('/api/missions');
 
-                if (!response.ok) throw new Error('Không thể thỉnh danh sách nhiệm vụ.');
+                if (!response.ok) {
+                    throw new Error('Không thể thỉnh danh sách nhiệm vụ từ máy chủ.');
+                }
 
                 const data = await response.json();
                 setMissions(data);
             } catch (err: any) {
-                console.warn("API chưa sẵn sàng, đang dùng data mẫu từ MongoDB của bạn:", err.message);
-                setMissions([
-                    { id: "d1", icon: "🔔", name: "Gõ mõ sáng", desc: "Gõ 10 tiếng", pts: 30, streakBonus: true, isChain: false },
-                    { id: "d2", icon: "🕯️", name: "Thắp nhang", desc: "Thắp & cầu nguyện", pts: 25, streakBonus: true, isChain: false },
-                    { id: "d4", icon: "🍲", name: "Ăn chay", desc: "1 bữa chay", pts: 15, streakBonus: false, isChain: false },
-                    { id: "w1", icon: "🕊️", name: "Phóng sinh", desc: "Mua sinh vật thả", pts: 100, streakBonus: false, isChain: false },
-                    { id: "c1", icon: "🔗", name: "Chuỗi Thiện Tâm", desc: "Ghi đức 7 ngày liên tục", pts: 200, isChain: true, chainDays: 7 },
-                ]);
+                console.error("Lỗi kết nối Backend:", err.message);
+                setError("Chưa thể kết nối tới Database. Xin đạo hữu kiểm tra lại Backend đã chạy ở cổng 5000 chưa nhé.");
             } finally {
                 setIsLoading(false);
             }
@@ -50,6 +47,7 @@ export default function TaskPage() {
     const toggleMission = async (missionId: string) => {
         setCompleted(prev => prev.includes(missionId) ? prev.filter(id => id !== missionId) : [...prev, missionId]);
 
+        // Mở lại dòng này nếu đạo hữu đã có API cập nhật trạng thái nhiệm vụ
         // await fetch(`/api/users/missions/complete`, { method: 'POST', body: JSON.stringify({ missionId }) });
     };
 
@@ -99,6 +97,10 @@ export default function TaskPage() {
                     <div className="flex flex-col items-center justify-center py-10 opacity-50">
                         <Loader2 className="mb-4 animate-spin text-gold-light" size={32} />
                         <p className="text-sm tracking-widest uppercase text-parchment/60">Đang thỉnh quyển chú...</p>
+                    </div>
+                ) : error ? (
+                    <div className="flex flex-col items-center justify-center p-6 py-10 text-center border text-red-400/80 bg-red-900/10 border-red-900/30 rounded-2xl">
+                        <p>{error}</p>
                     </div>
                 ) : (
                     <div className="space-y-10">
