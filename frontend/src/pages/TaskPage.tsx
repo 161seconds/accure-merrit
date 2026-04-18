@@ -25,7 +25,7 @@ export default function TaskPage() {
             try {
                 setIsLoading(true);
                 setError(null);
-                const response = await fetch('/api/missions');
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/missions`);
 
                 if (!response.ok) {
                     throw new Error('Không thể thỉnh danh sách nhiệm vụ từ máy chủ.');

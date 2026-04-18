@@ -1,8 +1,8 @@
 {
     "rewrites": [
         {
-            "source": "/((?!api).*)",
-            "destination": "/"
+            "source": "/api/(.*)",
+            "destination": "https://accrue-merit.onrender.com/api/$1"
         }
     ]
 }
