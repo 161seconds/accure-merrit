@@ -49,7 +49,6 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Nút bấm ở trung tâm, dễ thao tác */}
         <div className="flex gap-4 w-full max-w-[280px] animate-[fadeIn_0.9s_0.8s_both] pointer-events-auto">
           <button
             onClick={() => navigate('/karma')}
